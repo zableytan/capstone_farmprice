@@ -6,7 +6,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Text("Welcome admin"),
+      body: Center(child: Text("ONGOING DEVELOPMENT")),
     );
   }
 }

@@ -501,7 +501,7 @@ class FirebaseService {
         'previousRetailPrice': retailPrice,
         'wholeSalePrice': wholeSalePrice,
         'landingPrice': landingPrice,
-        'oldRetailPrice': oldRetailPrice, 
+        'oldRetailPrice': oldRetailPrice,
         'cropImage': cropImage ?? oldImageURL,
       });
 
@@ -511,7 +511,7 @@ class FirebaseService {
         if (context.mounted) Navigator.of(context).pop();
         showFloatingSnackBar(
           context,
-          'Market updated successfully.',
+          'Crop updated successfully.',
           const Color(0xFF3C4D48),
         );
         Navigator.of(context).pop();

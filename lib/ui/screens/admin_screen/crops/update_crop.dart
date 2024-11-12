@@ -81,17 +81,17 @@ class _UpdateCropState extends State<UpdateCrop> {
     });
 
     try {
-      final data = await FirebaseService.getMarket(widget.cropID);
+      final data = await FirebaseService.getCropInfo(widget.cropID);
 
       if (mounted) {
         setState(() {
           _cropNameController.text = data['cropName'];
-          _retailPriceController.text = data['retailPrice'];
-          _wholeSalePriceController.text = data['wholeSalePrice'];
-          _landingPriceController.text = data['landingPrice'];
+          _retailPriceController.text = data['retailPrice'].toString();
+          _wholeSalePriceController.text = data['wholeSalePrice'].toString();
+          _landingPriceController.text = data['landingPrice'].toString();
           imageULR = data['cropImage'];
           oldImageURL = imageULR;
-          _oldRetailPriceController.text = data['retaildPrice'];
+          _oldRetailPriceController.text = data['retailPrice'].toString();
         });
       }
     } catch (e) {
@@ -273,7 +273,7 @@ class _UpdateCropState extends State<UpdateCrop> {
 
             // SPACING
             const SizedBox(height: 10),
-            
+
             const Text(
               "Market Image",
               style: TextStyle(
