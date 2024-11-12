@@ -104,8 +104,6 @@ class _UpdateCropState extends State<UpdateCrop> {
 
   // METHOD THAT WILL SAVED MARKET INFO
   void handleUpdateCrop() async {
-    
-
     await FirebaseService.updateCropInfo(
       context: context,
       cropID: widget.cropID,
