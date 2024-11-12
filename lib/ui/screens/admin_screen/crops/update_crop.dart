@@ -8,17 +8,24 @@ import 'package:myapp/ui/widgets/app_bar/custom_app_bar.dart';
 import 'package:myapp/ui/widgets/custom_button.dart';
 import 'package:myapp/ui/widgets/custom_text_field.dart';
 
-class AddCrops extends StatefulWidget {
-  const AddCrops({super.key});
+class UpdateCrop extends StatefulWidget {
+  final String cropID;
+
+  const UpdateCrop({
+    super.key,
+    required this.cropID,
+  });
 
   @override
-  State<AddCrops> createState() => _AddCropsState();
+  State<UpdateCrop> createState() => _UpdateCropState();
 }
 
-class _AddCropsState extends State<AddCrops> {
+class _UpdateCropState extends State<UpdateCrop> {
   // CONTROLLERS
   final TextEditingController _cropNameController = TextEditingController();
   final TextEditingController _retailPriceController = TextEditingController();
+  final TextEditingController _oldRetailPriceController =
+      TextEditingController();
   final TextEditingController _wholeSalePriceController =
       TextEditingController();
   final TextEditingController _landingPriceController = TextEditingController();
@@ -31,6 +38,16 @@ class _AddCropsState extends State<AddCrops> {
 
   // VARIABLE DECLARATION
   PlatformFile? cropImage;
+  String? imageULR;
+  String? oldImageURL;
+  bool isLoading = true;
+
+  // INITIALIZE
+  @override
+  void initState() {
+    super.initState();
+    getCropsInfo();
+  }
 
   // DISPOSE
   @override
@@ -43,6 +60,7 @@ class _AddCropsState extends State<AddCrops> {
     _retailPriceFocusNode.dispose();
     _wholeSalePriceFocusNode.dispose();
     _landingPriceFocusNode.dispose();
+    _oldRetailPriceController.dispose();
     super.dispose();
   }
 
@@ -56,20 +74,48 @@ class _AddCropsState extends State<AddCrops> {
     }
   }
 
-  // METHOD THAT WILL CROP INFO
-  void handleCreateCrop() async {
-    if (_cropNameController.text.isEmpty || cropImage == null) {
-      print("Please provide all required fields");
-      return;
-    }
+  // METHOD THAT WILL GET THE MARKETS
+  void getCropsInfo() async {
+    setState(() {
+      isLoading = true;
+    });
 
-    await FirebaseService.createCrop(
+    try {
+      final data = await FirebaseService.getMarket(widget.cropID);
+
+      if (mounted) {
+        setState(() {
+          _cropNameController.text = data['cropName'];
+          _retailPriceController.text = data['retailPrice'];
+          _wholeSalePriceController.text = data['wholeSalePrice'];
+          _landingPriceController.text = data['landingPrice'];
+          imageULR = data['cropImage'];
+          oldImageURL = imageULR;
+          _oldRetailPriceController.text = data['retaildPrice'];
+        });
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print('Error fetching user services: $e');
+    }
+  }
+
+  // METHOD THAT WILL SAVED MARKET INFO
+  void handleUpdateCrop() async {
+    
+
+    await FirebaseService.updateCropInfo(
       context: context,
+      cropID: widget.cropID,
       cropName: _cropNameController.text,
+      oldRetailPrice: double.parse(_oldRetailPriceController.text),
       retailPrice: double.parse(_retailPriceController.text),
       wholeSalePrice: double.parse(_wholeSalePriceController.text),
       landingPrice: double.parse(_landingPriceController.text),
       cropImage: cropImage,
+      oldImageURL: oldImageURL,
     );
   }
 
@@ -229,9 +275,9 @@ class _AddCropsState extends State<AddCrops> {
 
             // SPACING
             const SizedBox(height: 10),
-
+            
             const Text(
-              "Crop Image",
+              "Market Image",
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
@@ -252,30 +298,47 @@ class _AddCropsState extends State<AddCrops> {
                   width: 1.5,
                 ),
                 elevation: 0,
-                minimumSize: const Size(double.infinity, 130),
+                minimumSize: const Size(double.infinity, 90),
               ),
               onPressed: () {
                 if (cropImage == null) {
                   cropImageSelection();
                 }
               },
-              child: cropImage != null
+              child: cropImage != null || imageULR != null
                   ? Stack(
                       children: <Widget>[
                         ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-                          child: Image.file(
-                            File(cropImage!.path!),
-                            width: double.infinity,
-                            height: 130,
-                            fit: BoxFit.cover,
-                          ),
+                          child: cropImage != null
+                              ? Image.file(
+                                  File(cropImage!.path!),
+                                  // Use the path of the selected image
+                                  width: double.infinity,
+                                  height: 130,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.network(
+                                  imageULR!,
+                                  width: double.infinity,
+                                  height: 130,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Image.asset(
+                                      "lib/ui/assets/no_image.jpeg",
+                                      fit: BoxFit.cover,
+                                      height: 120,
+                                      width: double.infinity,
+                                    );
+                                  },
+                                ),
                         ),
                         Positioned(
                           child: GestureDetector(
                             onTap: () {
                               setState(() {
                                 cropImage = null;
+                                imageULR = null;
                               });
                             },
                             child: Container(
@@ -298,7 +361,7 @@ class _AddCropsState extends State<AddCrops> {
                             color: Colors.grey,
                           ),
                           Text(
-                            "Crop Image",
+                            "Market View",
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.normal,
@@ -315,14 +378,14 @@ class _AddCropsState extends State<AddCrops> {
 
             // BUTTON: SAVE PHONE NUMBER
             CustomButton(
-              onPressed: handleCreateCrop,
+              onPressed: handleUpdateCrop,
               buttonHeight: 50,
               buttonColor: const Color(0xFF3C4D48),
               fontWeight: FontWeight.w500,
               fontSize: 17,
               fontColor: Colors.white,
               borderRadius: 10,
-              buttonLabel: "List Crop",
+              buttonLabel: "Publish",
             ),
 
             // SPACING

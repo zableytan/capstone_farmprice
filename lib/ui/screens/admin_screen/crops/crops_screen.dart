@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:myapp/services/firebase_service.dart';
 import 'package:myapp/ui/screens/admin_screen/crop_reports/update_crop_report.dart';
 import 'package:myapp/ui/screens/admin_screen/crops/add_crops.dart';
+import 'package:myapp/ui/screens/admin_screen/crops/update_crop.dart';
 import 'package:myapp/ui/widgets/app_bar/custom_app_bar.dart';
-import 'package:myapp/ui/widgets/cards/crop_report_card.dart';
+import 'package:myapp/ui/widgets/cards/crop_card.dart';
 import 'package:myapp/ui/widgets/custom_floating_action_button.dart';
 import 'package:myapp/ui/widgets/custom_loading_indicator_v2.dart';
 import 'package:myapp/ui/widgets/modals/custom_modals.dart';
@@ -68,16 +69,16 @@ class _CropsScreenState extends State<CropsScreen> {
               ),
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
-                var cropReports = snapshot.data!.docs[index];
+                var cropInfo = snapshot.data!.docs[index];
 
-                return CropReportCard(
-                  cropReports: cropReports,
+                return CropCard(
+                  cropInfo: cropInfo,
                   onUpdate: () {
-                    String cropReportID = cropReports.id;
+                    String cropID = cropInfo.id;
                     navigateWithSlideFromRight(
                       context,
-                      UpdateCropReport(
-                        cropReportID: cropReportID,
+                      UpdateCrop(
+                        cropID: cropID,
                       ),
                       0.0,
                       1.0,
@@ -91,7 +92,7 @@ class _CropsScreenState extends State<CropsScreen> {
                       (cropReportsID) => FirebaseService.deleteCropReport(
                           context,
                           marketID: cropReportsID),
-                      cropReports.id,
+                      cropInfo.id,
                     );
                   },
                 );
