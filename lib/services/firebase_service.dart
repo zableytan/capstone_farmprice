@@ -583,46 +583,4 @@ class FirebaseService {
       }
     }
   }
-
-  // DELETE: CROP
-  static Future<void> deleteCrop(
-    BuildContext context, {
-    required String cropID,
-  }) async {
-    try {
-      // DISPLAY LOADING DIALOG
-      showLoadingIndicator(context);
-
-      // Delete the market document from Firestore
-      await FirebaseFirestore.instance
-          .collection('admin_accounts')
-          .doc('crops_available')
-          .collection('crops')
-          .doc(cropID)
-          .delete();
-
-      // Dismiss the loading dialog first
-      if (context.mounted) {
-        Navigator.of(context).pop();
-      }
-
-      // IF DELETION SUCCESSFUL
-      if (context.mounted) {
-        showFloatingSnackBar(
-          context,
-          'Crop deleted successfully.',
-          const Color(0xFF3C4D48),
-        );
-      }
-    } catch (e) {
-      // IF DELETION FAILED
-      if (context.mounted) {
-        showFloatingSnackBar(
-          context,
-          "Error deleting market: ${e.toString()}",
-          const Color(0xFFe91b4f),
-        );
-      }
-    }
-  }
 }

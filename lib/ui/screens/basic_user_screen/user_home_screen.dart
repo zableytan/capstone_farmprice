@@ -6,6 +6,7 @@ import 'package:myapp/ui/screens/basic_user_screen/historical_data.dart';
 import 'package:myapp/ui/screens/basic_user_screen/market_trends.dart';
 import 'package:myapp/ui/screens/basic_user_screen/markets.dart';
 import 'package:myapp/ui/screens/basic_user_screen/price_changes.dart';
+import 'package:myapp/ui/widgets/custom_loading_indicator_v2.dart';
 
 class UserHomeScreen extends StatefulWidget {
   const UserHomeScreen({super.key});
@@ -62,13 +63,12 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        
       ),
       body: FutureBuilder<List<String>>(
         future: _getCropIds(), // Fetch crop IDs asynchronously
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CustomLoadingIndicator());
           } else if (snapshot.hasError) {
             return const Center(child: Text("Error fetching crop IDs"));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -155,13 +155,13 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
         );
         break;
       case 1:
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => HistoricalDataScreen(
-        //         cropIds: cropIds), // Pass crop IDs to the next screen
-        //   ),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HistoricalDataScreen(
+                cropIds: cropIds), // Pass crop IDs to the next screen
+          ),
+        );
         break;
       case 2:
         Navigator.push(

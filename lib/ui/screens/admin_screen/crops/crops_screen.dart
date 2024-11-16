@@ -3,7 +3,8 @@ import 'package:myapp/services/firebase_service.dart';
 import 'package:myapp/ui/screens/admin_screen/crops/add_crops.dart';
 import 'package:myapp/ui/screens/admin_screen/crops/update_crop.dart';
 import 'package:myapp/ui/widgets/app_bar/custom_app_bar.dart';
-import 'package:myapp/ui/widgets/cards/crop_card.dart';
+import 'package:myapp/ui/widgets/cards/admin_cards/crop_card.dart';
+
 import 'package:myapp/ui/widgets/custom_floating_action_button.dart';
 import 'package:myapp/ui/widgets/custom_loading_indicator_v2.dart';
 import 'package:myapp/ui/widgets/modals/custom_modals.dart';
@@ -88,7 +89,7 @@ class _CropsScreenState extends State<CropsScreen> {
                       context,
                       'Are you sure you want to delete this crops?',
                       'Delete',
-                      (cropReportsID) => FirebaseService.deleteCropReport(
+                          (cropReportsID) => FirebaseService.deleteCropReport(
                           context,
                           marketID: cropReportsID),
                       cropInfo.id,
