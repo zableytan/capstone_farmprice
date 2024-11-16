@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/ui/screens/admin_screen/login_screen.dart';
-import 'package:myapp/ui/screens/basic_user_screen/home_screen.dart';
+import 'package:myapp/ui/screens/basic_user_screen/login_user_account.dart';
 import 'package:myapp/ui/widgets/custom_button.dart';
 import 'package:myapp/ui/widgets/custom_image_display.dart';
 
@@ -49,7 +49,7 @@ class LandingScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const HomeScreen()),
+                    MaterialPageRoute(builder: (context) => const LoginUserAccount()),
                   );
                 },
                 buttonColor: const Color(0xFF39590e),

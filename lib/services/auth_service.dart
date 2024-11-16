@@ -1,75 +1,77 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:myapp/ui/screens/admin_screen/admin_home_screen.dart';
+import 'package:myapp/ui/screens/basic_user_screen/user_home_screen.dart';
 import 'package:myapp/ui/widgets/custom_loading_indicator.dart';
 
 class AuthService {
   // SIGN IN AUTHENTICATION
-  Future signIn({
-    // PARAMETER
+  Future<bool> signIn({
     required BuildContext context,
     required String username,
     required String password,
+    required String userType,
   }) async {
     try {
       // SHOW LOADING INDICATOR
-      if (context.mounted) {
-        showLoadingIndicator(context);
-      }
+      showLoadingIndicator(context);
 
-      // SING IN USING USERNAME AND PASSWORD
+      // SIGN IN USING USERNAME AND PASSWORD
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: username.trim(),
         password: password.trim(),
       );
 
-      // DISMISS LOADING INDICATOR
+      // Navigate to the correct home screen
       if (context.mounted) {
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(); // Dismiss loading indicator
+
+        if (userType == 'admin') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => const AdminHomeScreen(),
+            ),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => const UserHomeScreen(),
+            ),
+          );
+        }
       }
 
-      if (context.mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (BuildContext context) => const AdminHomeScreen(),
-          ),
-        );
-      }
+      return true; // Login successful
     } on FirebaseAuthException catch (e) {
       // Handle FirebaseAuthException errors
       String errorMessage;
       if (e.code == 'user-not-found') {
         errorMessage =
-            'Account not found. Please check your username and try again.';
+        'Account not found. Please check your username and try again.';
       } else {
         errorMessage = 'Incorrect username or password. Please try again.';
       }
-      // UPDATE ERROR MESSAGE
+
+      // Display error message if authentication fails
       if (context.mounted) {
+        Navigator.of(context).pop(); // Dismiss loading indicator
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(errorMessage)));
       }
-
-      // DISMISS LOADING DIALOG
-      if (context.mounted) {
-        Navigator.of(context).pop();
-      }
-      
+      return false; // Login failed
     } catch (e) {
-      // Handle other errors
+      // Handle other unexpected errors
       debugPrint('Error signing in: $e');
 
-      // DISPLAY ERROR MESSAGE TO THE USER
+      // Display generic error message to the user
       if (context.mounted) {
+        Navigator.of(context).pop(); // Dismiss loading indicator
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Error signing in: $e')));
       }
-
-      // DISMISS LOADING DIALOG
-      if (context.mounted) {
-        if (Navigator.of(context).canPop()) Navigator.of(context).pop();
-      }
+      return false; // Login failed
     }
   }
 }

@@ -68,7 +68,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
             children: <Widget>[
               // MARKETS
               _buildButtonContainers(
-                () {
+                    () {
                   navigateWithSlideFromRight(
                     context,
                     const MarketsScreen(),
@@ -86,7 +86,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               ),
               // CROP REPORT
               _buildButtonContainers(
-                () {
+                    () {
                   navigateWithSlideFromRight(
                     context,
                     const CropReportsScreen(),
@@ -104,7 +104,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               ),
               // CROPS
               _buildButtonContainers(
-                () {
+                    () {
                   navigateWithSlideFromRight(
                     context,
                     const CropsScreen(),
@@ -128,15 +128,15 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   }
 
   Widget _buildButtonContainers(
-    VoidCallback onPressed,
-    String imageSource,
-    String buttonLabel,
-    double fontSize,
-    FontWeight fontWeight,
-    Color fontColor,
-    Color buttonColor,
-    double borderRadius,
-  ) {
+      VoidCallback onPressed,
+      String imageSource,
+      String buttonLabel,
+      double fontSize,
+      FontWeight fontWeight,
+      Color fontColor,
+      Color buttonColor,
+      double borderRadius,
+      ) {
     return Container(
       margin: const EdgeInsets.only(top: 10, bottom: 5),
       height: 55,

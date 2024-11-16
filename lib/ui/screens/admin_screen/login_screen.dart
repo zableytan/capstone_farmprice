@@ -45,6 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
       context: context,
       username: username,
       password: password,
+      userType: 'admin',
     );
   }
 
@@ -87,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     // USERNAME
                     Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.1),
+                          horizontal: MediaQuery.of(context).size.width * 0.1),
                       child: CustomTextField(
                         controller: _usernameController,
                         currentFocusNode: _usernameNode,
@@ -114,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     // PASSWORD
                     Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.1),
+                          horizontal: MediaQuery.of(context).size.width * 0.1),
                       child: CustomTextField(
                         controller: _passwordController,
                         currentFocusNode: _passwordNode,
@@ -140,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     // LOGIN BUTTON
                     Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.1),
+                          horizontal: MediaQuery.of(context).size.width * 0.1),
                       child: CustomButton(
                         buttonLabel: "Login",
                         onPressed: _login,

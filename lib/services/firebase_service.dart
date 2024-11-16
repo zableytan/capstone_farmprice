@@ -23,7 +23,7 @@ class FirebaseService {
 
       // Upload the market image
       final String? marketImageURL =
-          await AdminServices.uploadFile(marketImage);
+      await AdminServices.uploadFile(marketImage);
 
       // Generate a unique market ID
       String marketID =
@@ -150,9 +150,9 @@ class FirebaseService {
 
   // DELETE: MARKET
   static Future<void> deleteMarket(
-    BuildContext context, {
-    required String marketID,
-  }) async {
+      BuildContext context, {
+        required String marketID,
+      }) async {
     try {
       // DISPLAY LOADING DIALOG
       showLoadingIndicator(context);
@@ -206,7 +206,7 @@ class FirebaseService {
 
       // Upload the market image
       final String? cropReportImageURL =
-          await AdminServices.uploadFile(cropReportImage);
+      await AdminServices.uploadFile(cropReportImage);
 
       // Generate a unique market ID
       String cropReportID =
@@ -333,9 +333,9 @@ class FirebaseService {
 
   // DELETE: MARKET
   static Future<void> deleteCropReport(
-    BuildContext context, {
-    required String marketID,
-  }) async {
+      BuildContext context, {
+        required String marketID,
+      }) async {
     try {
       // DISPLAY LOADING DIALOG
       showLoadingIndicator(context);
@@ -505,10 +505,22 @@ class FirebaseService {
         'cropImage': cropImage ?? oldImageURL,
       });
 
+      // Now save the price to the history for today's date
+      await FirebaseFirestore.instance
+          .collection('admin_accounts')
+          .doc('crops_available')
+          .collection('crops')
+          .doc(cropID)
+          .collection('crop_price_history')
+          .add({
+        'date': Timestamp.fromDate(DateTime.now()), // Save today's date
+        'price': retailPrice, // Save the updated retail price
+      });
+
       // IF ADDING SERVICE SUCCESSFUL
       if (context.mounted) {
         // Dismiss loading dialog
-        if (context.mounted) Navigator.of(context).pop();
+        Navigator.of(context).pop();
         showFloatingSnackBar(
           context,
           'Crop updated successfully.',
@@ -525,7 +537,49 @@ class FirebaseService {
           const Color(0xFFe91b4f),
         );
         // Dismiss loading dialog
-        if (context.mounted) Navigator.of(context).pop();
+        Navigator.of(context).pop();
+      }
+    }
+  }
+
+  // DELETE: CROP
+  static Future<void> deleteCrop(
+      BuildContext context, {
+        required String cropID,
+      }) async {
+    try {
+      // DISPLAY LOADING DIALOG
+      showLoadingIndicator(context);
+
+      // Delete the market document from Firestore
+      await FirebaseFirestore.instance
+          .collection('admin_accounts')
+          .doc('crops_available')
+          .collection('crops')
+          .doc(cropID)
+          .delete();
+
+      // Dismiss the loading dialog first
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+
+      // IF DELETION SUCCESSFUL
+      if (context.mounted) {
+        showFloatingSnackBar(
+          context,
+          'Crop deleted successfully.',
+          const Color(0xFF3C4D48),
+        );
+      }
+    } catch (e) {
+      // IF DELETION FAILED
+      if (context.mounted) {
+        showFloatingSnackBar(
+          context,
+          "Error deleting market: ${e.toString()}",
+          const Color(0xFFe91b4f),
+        );
       }
     }
   }

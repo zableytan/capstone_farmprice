@@ -3,7 +3,7 @@ import 'package:myapp/services/firebase_service.dart';
 import 'package:myapp/ui/screens/admin_screen/markets/add_market.dart';
 import 'package:myapp/ui/screens/admin_screen/markets/update_market.dart';
 import 'package:myapp/ui/widgets/app_bar/custom_app_bar.dart';
-import 'package:myapp/ui/widgets/cards/market_card.dart';
+import 'package:myapp/ui/widgets/cards/admin_cards/market_card.dart';
 import 'package:myapp/ui/widgets/custom_floating_action_button.dart';
 import 'package:myapp/ui/widgets/custom_loading_indicator_v2.dart';
 import 'package:myapp/ui/widgets/modals/custom_modals.dart';

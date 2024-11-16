@@ -38,7 +38,7 @@ class CustomAppBar extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
         minFontSize: 13,
-        maxFontSize: 15,
+        maxFontSize: 18,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
