@@ -583,4 +583,191 @@ class FirebaseService {
       }
     }
   }
+
+  // ****************** TRENT MARKET SERVICES ****************** //
+
+  // CREATE: CROP
+  static Future<void> createTrendCrop({
+    required BuildContext context,
+    required String cropName,
+    required double retailPrice,
+    required PlatformFile? cropImage,
+  }) async {
+    try {
+      // DISPLAY LOADING DIALOG
+      showLoadingIndicator(context);
+      final userCredential = FirebaseAuth.instance.currentUser;
+      if (userCredential == null) throw Exception("User not signed in");
+
+      // Upload the market image
+      final String? cropImageURL = await AdminServices.uploadFile(cropImage);
+
+      // Generate a unique market ID
+      String cropID =
+          FirebaseFirestore.instance.collection('admin_accounts').doc().id;
+
+      // Prepare the market data
+      final cropsData = {
+        'cropName': cropName,
+        'cropID': cropID,
+        'retailPrice': retailPrice,
+        'previousRetailPrice': retailPrice,
+        'cropImage': cropImageURL,
+      };
+
+      // Save the market data to Firestore
+      await FirebaseFirestore.instance
+          .collection('admin_accounts')
+          .doc('trend_market')
+          .collection('trend_crops')
+          .doc(cropID)
+          .set(cropsData);
+
+      // IF CREATING SERVICE SUCCESSFUL
+      if (context.mounted) {
+        // Dismiss loading dialog
+        if (context.mounted) Navigator.of(context).pop();
+        showFloatingSnackBar(
+          context,
+          'Crop added successfully.',
+          const Color(0xFF3C4D48),
+        );
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      // IF CREATING SERVICE FAILED
+      if (context.mounted) {
+        showFloatingSnackBar(
+          context,
+          "Error updating service: ${e.toString()}",
+          const Color(0xFFe91b4f),
+        );
+        // Dismiss loading dialog
+        if (context.mounted) Navigator.of(context).pop();
+      }
+    }
+  }
+
+  // READ: CROP INFO
+  static Future<Map<String, dynamic>> getTrendCrop(String cropID) async {
+    final User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      final DocumentSnapshot marketSnapshot = await FirebaseFirestore.instance
+          .collection('admin_accounts')
+          .doc('trend_market')
+          .collection('trend_crops')
+          .doc(cropID)
+          .get();
+
+      // RETURN MARKETSNAPSHOT AS MAP
+      return marketSnapshot.data() as Map<String, dynamic>;
+    }
+    return {};
+  }
+
+  // UPDATE: CROP
+  static Future<void> updateTrendCrop({
+    // PARAMETERS NEEDED
+    required BuildContext context,
+    required String cropID,
+    required String cropName,
+    required double retailPrice,
+    PlatformFile? cropImage,
+    String? oldImageURL,
+  }) async {
+    try {
+      // DISPLAY LOADING DIALOG
+      showLoadingIndicator(context);
+
+      final userCredential = FirebaseAuth.instance.currentUser;
+      if (userCredential == null) throw Exception("User not signed in");
+
+      final String? updatedImageURL = await AdminServices.uploadFile(
+        cropImage,
+        oldImageURL: oldImageURL,
+      );
+
+      if (updatedImageURL == null && oldImageURL == null) {
+        debugPrint("UPDATED IMAGE: $updatedImageURL");
+        throw Exception("Image upload failed, no image available to update.");
+      }
+
+      // Update the market data
+      await FirebaseFirestore.instance
+          .collection('admin_accounts')
+          .doc('trend_market')
+          .collection('trend_crops')
+          .doc(cropID)
+          .update({
+        'cropName': cropName,
+        'retailPrice': retailPrice,
+        'cropImage': cropImage ?? oldImageURL,
+      });
+
+      // IF ADDING SERVICE SUCCESSFUL
+      if (context.mounted) {
+        // Dismiss loading dialog
+        Navigator.of(context).pop();
+        showFloatingSnackBar(
+          context,
+          'Crop updated successfully.',
+          const Color(0xFF3C4D48),
+        );
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      // IF ADDING SERVICE FAILED
+      if (context.mounted) {
+        showFloatingSnackBar(
+          context,
+          "Error updating services: ${e.toString()}",
+          const Color(0xFFe91b4f),
+        );
+        // Dismiss loading dialog
+        Navigator.of(context).pop();
+      }
+    }
+  }
+
+  // DELETE: CROP
+  static Future<void> deleteTrendCrop(
+      BuildContext context, {
+        required String cropID,
+      }) async {
+    try {
+      // DISPLAY LOADING DIALOG
+      showLoadingIndicator(context);
+
+      // Delete the market document from Firestore
+      await FirebaseFirestore.instance
+          .collection('admin_accounts')
+          .doc('trend_market')
+          .collection('trend_crops')
+          .doc(cropID)
+          .delete();
+
+      // Dismiss the loading dialog first
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+
+      // IF DELETION SUCCESSFUL
+      if (context.mounted) {
+        showFloatingSnackBar(
+          context,
+          'Trend Crop deleted successfully.',
+          const Color(0xFF3C4D48),
+        );
+      }
+    } catch (e) {
+      // IF DELETION FAILED
+      if (context.mounted) {
+        showFloatingSnackBar(
+          context,
+          "Error deleting market: ${e.toString()}",
+          const Color(0xFFe91b4f),
+        );
+      }
+    }
+  }
 }

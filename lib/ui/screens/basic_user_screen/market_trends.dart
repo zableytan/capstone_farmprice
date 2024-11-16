@@ -31,8 +31,8 @@ class _MarketTrendsState extends State<MarketTrends> {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('admin_accounts')
-            .doc('crops_available')
-            .collection('crops')
+            .doc('trend_market')
+            .collection('trend_crops')
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -48,33 +48,24 @@ class _MarketTrendsState extends State<MarketTrends> {
           if (snapshot.data?.docs.isEmpty ?? true) {
             // DISPLAY THERE IS NO AVAILABLE DATA
             return const NoMarketAvailable(
-              screenName: 'crops',
+              screenName: 'trent market',
             );
           } else {
-            // SORT DATA BY 'retailPrice' IN DESCENDING ORDER
-            List<QueryDocumentSnapshot> sortedCrops = snapshot.data!.docs;
-            sortedCrops.sort((a, b) {
-              double aPrice = (a['retailPrice'] ?? 0).toDouble();
-              double bPrice = (b['retailPrice'] ?? 0).toDouble();
-              return bPrice.compareTo(aPrice); // Sort high to low
-            });
-
-            // DISPLAY SORTED DATA IN GRIDVIEW
+            // DISPLAY AVAILABLE SERVICES: AS GRIDVIEW
             return GridView.builder(
               padding: const EdgeInsets.all(10),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 1, // NUMBER OF COLUMNS
-                crossAxisSpacing: 5, // HORIZONTAL SPACE BETWEEN CARDS
-                mainAxisSpacing: 5, // VERTICAL SPACE BETWEEN CARDS
-                childAspectRatio: 5, // ASPECT RATIO OF EACH CARD
+                crossAxisSpacing: 10, // HORIZONTAL SPACE BETWEEN CARDS
+                mainAxisSpacing: 10, // VERTICAL SPACE BETWEEN CARDS
+                childAspectRatio: 4, // ASPECT RATIO OF EACH CARD
               ),
-              itemCount: sortedCrops.length,
+              itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
-                var cropInfo = sortedCrops[index];
+                var cropInfo = snapshot.data!.docs[index];
 
                 return UserMarketTrendsCard(
                   cropInfo: cropInfo,
-                  index: index,
                 );
               },
             );

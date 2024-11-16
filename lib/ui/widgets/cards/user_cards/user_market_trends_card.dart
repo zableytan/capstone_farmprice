@@ -5,13 +5,11 @@ import 'package:myapp/ui/screens/basic_user_screen/crop_detail_screen.dart';
 class UserMarketTrendsCard extends StatelessWidget {
   // PARAMETERS NEEDED
   final dynamic cropInfo;
-  final int index;
 
   // CONSTRUCTOR FOR CREATING NEW INSTANCE/OBJECT
   const UserMarketTrendsCard({
     super.key,
     required this.cropInfo,
-    required this.index,
   });
 
   @override
@@ -57,28 +55,13 @@ class UserMarketTrendsCard extends StatelessWidget {
             CrossAxisAlignment.center, // Align children vertically
             children: <Widget>[
               const SizedBox(width: 20),
-              // First Column: Counter
-              SizedBox(
-                width: 40,
-                child: Center(
-                  child: Text(
-                    '#${index + 1}', // Display the counter starting from 1
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 20,
-                      color: Color(0xFF222227),
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(width: 50),
-
               // Second Column: Circular Image
               SizedBox(
-                width: 50,
-                height: 50,
-                child: ClipOval(
+                width: 60,
+                height: 60,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(
+                      8), // Adjust this value for rounding
                   child: imageURL != null && imageURL.isNotEmpty
                       ? FadeInImage(
                     width: 50,
@@ -114,7 +97,24 @@ class UserMarketTrendsCard extends StatelessWidget {
                   style: const TextStyle(
                     color: Color(0xFF222227),
                     fontWeight: FontWeight.w500,
-                    fontSize: 18,
+                    fontSize: 20,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  minFontSize: 14,
+                ),
+              ),
+
+              const SizedBox(width: 50),
+
+              // Third Column: Crop Name
+              Expanded(
+                child: AutoSizeText(
+                  "₱ ${cropInfo['retailPrice'].toString()}",
+                  style: const TextStyle(
+                    color: Color(0xFF222227),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 20,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
