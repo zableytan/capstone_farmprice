@@ -70,7 +70,9 @@ class _CropListScreenState extends State<CropListScreen> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => HistoricalDataScreen(
-                          cropIds: sortedCrops.map((crop) => crop.id).toList(), // Pass all crop IDs
+                          cropIds: sortedCrops
+                              .map((crop) => crop.id)
+                              .toList(), // Pass all crop IDs
                           initialIndex: index, // Start with the tapped crop
                         ),
                       ),
@@ -81,28 +83,33 @@ class _CropListScreenState extends State<CropListScreen> {
                     elevation: 2,
                     margin: const EdgeInsets.all(8),
                     child: ListTile(
-                      leading: cropInfo['cropImage'] != null && cropInfo['cropImage'].isNotEmpty
+                      leading: cropInfo['cropImage'] != null &&
+                              cropInfo['cropImage'].isNotEmpty
                           ? ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          cropInfo['cropImage'],
-                          width: 50,
-                          height: 50,
-                          fit: BoxFit.cover,
-                        ),
-                      )
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                cropInfo['cropImage'],
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                              ),
+                            )
                           : ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          'lib/ui/assets/no_image.jpeg',
-                          width: 50,
-                          height: 50,
-                          fit: BoxFit.cover,
-                        ),
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.asset(
+                                'lib/ui/assets/no_image.jpeg',
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                      title: Text(
+                        cropInfo['cropName'] ?? 'Unknown Crop',
+                        style: const TextStyle(fontSize: 11),
                       ),
-                      title: Text(cropInfo['cropName'] ?? 'Unknown Crop'),
                       subtitle: Text(
                         'Retail Price: ₱${cropInfo['retailPrice']?.toStringAsFixed(2) ?? '0.00'}',
+                        style: const TextStyle(fontSize: 12),
                       ),
                       trailing: const Icon(Icons.arrow_forward),
                     ),

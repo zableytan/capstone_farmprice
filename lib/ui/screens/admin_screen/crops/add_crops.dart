@@ -142,10 +142,6 @@ class _AddCropsState extends State<AddCrops> {
               controller: _retailPriceController,
               currentFocusNode: _retailPriceFocusNode,
               nextFocusNode: _wholeSalePriceFocusNode,
-              keyBoardType: TextInputType.number,
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly,
-              ],
               validator: (value) {
                 if (value!.isEmpty) {
                   return "Retail price is required";
@@ -176,10 +172,6 @@ class _AddCropsState extends State<AddCrops> {
               controller: _wholeSalePriceController,
               currentFocusNode: _wholeSalePriceFocusNode,
               nextFocusNode: _landingPriceFocusNode,
-              keyBoardType: TextInputType.number,
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly,
-              ],
               validator: (value) {
                 if (value!.isEmpty) {
                   return "Whole price is required";
@@ -210,10 +202,6 @@ class _AddCropsState extends State<AddCrops> {
               controller: _landingPriceController,
               currentFocusNode: _landingPriceFocusNode,
               nextFocusNode: null,
-              keyBoardType: TextInputType.number,
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly,
-              ],
               validator: (value) {
                 if (value!.isEmpty) {
                   return "Landing price is required";
