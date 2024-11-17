@@ -13,6 +13,15 @@ class CurrentPrices extends StatefulWidget {
 }
 
 class _CurrentPricesState extends State<CurrentPrices> {
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,61 +33,140 @@ class _CurrentPricesState extends State<CurrentPrices> {
           titleText: "Prices Today",
           fontColor: const Color(0xFF3C4D48),
           onLeadingPressed: () {
-            Navigator.pop(context); // Safely pops to the previous screen
+            Navigator.pop(context);
           },
         ),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('admin_accounts')
-            .doc('crops_available')
-            .collection('crops')
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // DISPLAY CUSTOM LOADING INDICATOR
-            return const CustomLoadingIndicator();
-          }
-          // IF FETCHING DATA HAS ERROR EXECUTE THIS
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-
-          // CHECK IF THERE IS AVAILABLE DATA
-          if (snapshot.data?.docs.isEmpty ?? true) {
-            // DISPLAY THERE IS NO AVAILABLE DATA
-            return const NoMarketAvailable(
-              screenName: 'crops',
-            );
-          } else {
-            // SORT DATA BY 'retailPrice' IN DESCENDING ORDER
-            List<QueryDocumentSnapshot> sortedCrops = snapshot.data!.docs;
-            sortedCrops.sort((a, b) {
-              double aPrice = (a['retailPrice'] ?? 0).toDouble();
-              double bPrice = (b['retailPrice'] ?? 0).toDouble();
-              return bPrice.compareTo(aPrice); // Sort high to low
-            });
-
-            // DISPLAY SORTED DATA IN GRIDVIEW
-            return GridView.builder(
-              padding: const EdgeInsets.all(10),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1, // NUMBER OF COLUMNS
-                crossAxisSpacing: 5, // HORIZONTAL SPACE BETWEEN CARDS
-                mainAxisSpacing: 5, // VERTICAL SPACE BETWEEN CARDS
-                childAspectRatio: 4.5, // ASPECT RATIO OF EACH CARD
+      body: Column(
+        children: [
+          // Search Bar
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    spreadRadius: 1,
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-              itemCount: sortedCrops.length,
-              itemBuilder: (context, index) {
-                var cropInfo = sortedCrops[index];
+              child: TextField(
+                controller: _searchController,
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value.toLowerCase();
+                  });
+                },
+                decoration: InputDecoration(
+                  hintText: 'Search crops...',
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: Color(0xFF133c0b),
+                  ),
+                  suffixIcon: _searchQuery.isNotEmpty
+                      ? IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      setState(() {
+                        _searchController.clear();
+                        _searchQuery = '';
+                      });
+                    },
+                  )
+                      : null,
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // Crops List
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('admin_accounts')
+                  .doc('crops_available')
+                  .collection('crops')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CustomLoadingIndicator();
+                }
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+                if (snapshot.data?.docs.isEmpty ?? true) {
+                  return const NoMarketAvailable(screenName: 'crops');
+                }
 
-                return UserCurrentPriceCard(
-                  cropInfo: cropInfo,
+                // Sort and filter the crops
+                List<QueryDocumentSnapshot> sortedCrops = snapshot.data!.docs;
+                sortedCrops.sort((a, b) {
+                  double aPrice = (a['retailPrice'] ?? 0).toDouble();
+                  double bPrice = (b['retailPrice'] ?? 0).toDouble();
+                  return bPrice.compareTo(aPrice);
+                });
+
+                // Filter based on search query
+                if (_searchQuery.isNotEmpty) {
+                  sortedCrops = sortedCrops.where((crop) {
+                    final cropName = (crop['cropName'] ?? '').toString().toLowerCase();
+                    return cropName.contains(_searchQuery);
+                  }).toList();
+                }
+
+                // Show "No results found" if search yields no results
+                if (sortedCrops.isEmpty && _searchQuery.isNotEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search_off,
+                          size: 64,
+                          color: Colors.grey[400],
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No crops found for "$_searchQuery"',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return GridView.builder(
+                  padding: const EdgeInsets.all(10),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 1,
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 5,
+                    childAspectRatio: 4.5,
+                  ),
+                  itemCount: sortedCrops.length,
+                  itemBuilder: (context, index) {
+                    var cropInfo = sortedCrops[index];
+                    return UserCurrentPriceCard(
+                      cropInfo: cropInfo,
+                    );
+                  },
                 );
               },
-            );
-          }
-        },
+            ),
+          ),
+        ],
       ),
     );
   }

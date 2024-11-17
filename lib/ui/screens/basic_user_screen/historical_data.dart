@@ -28,12 +28,73 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
   String cropImage = '';
   String errorMessage = '';
 
+  // New variables for search functionality
+  TextEditingController searchController = TextEditingController();
+  List<Map<String, dynamic>> allCrops = [];
+  List<String> filteredCropIds = [];
+  bool isSearching = false;
+
   @override
   void initState() {
     super.initState();
     _tooltip = TooltipBehavior(enable: true);
-    currentIndex = widget.initialIndex; // Start with the tapped crop
+    currentIndex = widget.initialIndex;
+    filteredCropIds = List.from(widget.cropIds);
+    _loadAllCrops();
     _loadCropData();
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  // New method to load all crops initially
+  Future<void> _loadAllCrops() async {
+    try {
+      final cropsSnapshot = await FirebaseFirestore.instance
+          .collection('admin_accounts')
+          .doc('crops_available')
+          .collection('crops')
+          .get();
+
+      setState(() {
+        allCrops = cropsSnapshot.docs
+            .map((doc) => {
+          'id': doc.id,
+          'cropName': doc.data()['cropName'] ?? 'Unknown Crop',
+        })
+            .toList();
+      });
+    } catch (e) {
+      print('Error loading all crops: $e');
+    }
+  }
+
+  // New method to handle search
+  void _handleSearch(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        filteredCropIds = List.from(widget.cropIds);
+        isSearching = false;
+      } else {
+        isSearching = true;
+        filteredCropIds = allCrops
+            .where((crop) =>
+        crop['cropName']
+            .toString()
+            .toLowerCase()
+            .contains(query.toLowerCase()) &&
+            widget.cropIds.contains(crop['id']))
+            .map((crop) => crop['id'] as String)
+            .toList();
+      }
+      currentIndex = 0;
+      if (filteredCropIds.isNotEmpty) {
+        _loadCropData();
+      }
+    });
   }
 
   Future<void> _loadCropData() async {
@@ -43,9 +104,8 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
     });
 
     try {
-      final cropId = widget.cropIds[currentIndex];
+      final cropId = filteredCropIds[currentIndex];
 
-      // Fetch crop details
       final cropDoc = await FirebaseFirestore.instance
           .collection('admin_accounts')
           .doc('crops_available')
@@ -61,7 +121,6 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
         cropImage = cropDetails['cropImage'] ?? '';
       });
 
-      // Fetch price history
       final snapshot = await FirebaseFirestore.instance
           .collection('admin_accounts')
           .doc('crops_available')
@@ -80,7 +139,8 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
 
       final now = DateTime.now();
       final past5Days = List.generate(5, (index) {
-        final date = DateFormat('MM/dd/yyyy').format(now.subtract(Duration(days: index)));
+        final date =
+        DateFormat('MM/dd/yyyy').format(now.subtract(Duration(days: index)));
         return data.firstWhere(
               (item) => item.date == date,
           orElse: () => _PriceData(date, 0),
@@ -100,7 +160,7 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
   }
 
   void _nextCrop() {
-    if (currentIndex < widget.cropIds.length - 1) {
+    if (currentIndex < filteredCropIds.length - 1) {
       setState(() => currentIndex++);
       _loadCropData();
     }
@@ -120,94 +180,141 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
         preferredSize: Size.fromHeight(AppBar().preferredSize.height),
         child: CustomAppBar(
           backgroundColor: const Color(0xFF133c0b).withOpacity(0.3),
-          titleText: cropName.isNotEmpty ? "Data for $cropName" : "Historical Data",
+          titleText:
+          cropName.isNotEmpty ? "Data for $cropName" : "Historical Data",
           fontColor: const Color(0xFF3C4D48),
           onLeadingPressed: () => Navigator.pop(context),
         ),
       ),
-      body: isLoading
-          ? const Center(child: CustomLoadingIndicator())
-          : errorMessage.isNotEmpty
-          ? Center(child: Text(errorMessage))
-          : Column(
+      body: Column(
         children: [
+          // Search Bar
           Padding(
-            padding: const EdgeInsets.all(35),
-            child: cropImage.isNotEmpty
-                ? ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                cropImage,
-                height: 120,
-                width: double.infinity,
-                fit: BoxFit.fitWidth,
-              ),
-            )
-                : Image.asset(
-              "lib/ui/assets/no_image.jpeg",
-              height: 150,
-              fit: BoxFit.cover,
-            ),
-          ),
-          Text(
-            cropName,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Expanded(
-            child: SfCartesianChart(
-              primaryXAxis: const CategoryAxis(title: AxisTitle(text: 'Date')),
-              primaryYAxis: NumericAxis(
-                title: const AxisTitle(text: 'Price'),
-                labelFormat: '₱{value}',
-              ),
-              tooltipBehavior: _tooltip,
-              series: [
-                ColumnSeries<_PriceData, String>(  // Change from LineSeries to ColumnSeries
-                  dataSource: priceData,
-                  xValueMapper: (data, _) => data.date,
-                  yValueMapper: (data, _) => data.price,
-                  dataLabelSettings: const DataLabelSettings(isVisible: true),
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: searchController,
+              decoration: InputDecoration(
+                hintText: 'Search crops...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xFF133c0b)),
                 ),
-              ],
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xFF133c0b), width: 2),
+                ),
+              ),
+              onChanged: _handleSearch,
             ),
           ),
 
-          Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,  // Center the buttons
-              children: [
-                ElevatedButton(
-                  onPressed: currentIndex > 0 ? _previousCrop : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF133c0b),  // Set the button color
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),  // Set rounded corners with radius of 10
+          // Show "No results found" when search yields no results
+          if (isSearching && filteredCropIds.isEmpty)
+            const Expanded(
+              child: Center(
+                child: Text(
+                  'No crops found',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              ),
+            )
+          else
+            Expanded(
+              child: isLoading
+                  ? const Center(child: CustomLoadingIndicator())
+                  : errorMessage.isNotEmpty
+                  ? Center(child: Text(errorMessage))
+                  : Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(35),
+                    child: cropImage.isNotEmpty
+                        ? ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        cropImage,
+                        height: 120,
+                        width: double.infinity,
+                        fit: BoxFit.fitWidth,
+                      ),
+                    )
+                        : Image.asset(
+                      "lib/ui/assets/no_image.jpeg",
+                      height: 150,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  child: const Text('Previous', style: TextStyle(
-                    color: Colors.white,
-                  ),),
-                ),
-                const SizedBox(width: 10),  // Add space between the buttons
-                ElevatedButton(
-                  onPressed: currentIndex < widget.cropIds.length - 1 ? _nextCrop : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF133c0b),  // Set the button color
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),  // Set rounded corners with radius of 10
+                  Text(
+                    cropName,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  child: const Text('Next', style: TextStyle(
-                    color: Colors.white),),
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: SfCartesianChart(
+                      primaryXAxis: const CategoryAxis(
+                          title: AxisTitle(text: 'Date')),
+                      primaryYAxis: NumericAxis(
+                        title: const AxisTitle(text: 'Price'),
+                        labelFormat: '₱{value}',
+                      ),
+                      tooltipBehavior: _tooltip,
+                      series: [
+                        ColumnSeries<_PriceData, String>(
+                          dataSource: priceData,
+                          xValueMapper: (data, _) => data.date,
+                          yValueMapper: (data, _) => data.price,
+                          dataLabelSettings:
+                          const DataLabelSettings(isVisible: true),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed:
+                          currentIndex > 0 ? _previousCrop : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF133c0b),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text(
+                            'Previous',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: currentIndex <
+                              filteredCropIds.length - 1
+                              ? _nextCrop
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF133c0b),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text(
+                            'Next',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 10),
         ],
       ),
     );

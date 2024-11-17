@@ -19,6 +19,8 @@ class CropsScreen extends StatefulWidget {
 }
 
 class _CropsScreenState extends State<CropsScreen> {
+  String _searchQuery = ""; // Variable to hold the search query
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,70 +36,103 @@ class _CropsScreenState extends State<CropsScreen> {
           },
         ),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('admin_accounts')
-            .doc('crops_available')
-            .collection('crops')
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // DISPLAY CUSTOM LOADING INDICATOR
-            return const CustomLoadingIndicator();
-          }
-          // IF FETCHING DATA HAS ERROR EXECUTE THIS
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-
-          // CHECK IF THERE IS AVAILABLE SERVICES
-          if (snapshot.data?.docs.isEmpty ?? true) {
-            // DISPLAY THERE IS NO AVAILABLE SERVICES
-            return const NoMarketAvailable(
-              screenName: 'crops',
-            );
-          } else {
-            // DISPLAY AVAILABLE SERVICES: AS GRIDVIEW
-            return GridView.builder(
-              padding: const EdgeInsets.all(10),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // NUMBER OF COLUMNS
-                crossAxisSpacing: 10, // HORIZONTAL SPACE BETWEEN CARDS
-                mainAxisSpacing: 10, // VERTICAL SPACE BETWEEN CARDS
-                childAspectRatio: 0.8, // ASPECT RATIO OF EACH CARD
+      body: Column(
+        children: [
+          // SEARCH BAR
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: TextField(
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value.toLowerCase(); // Update search query
+                });
+              },
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search),
+                hintText: 'Search crops...',
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
               ),
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (context, index) {
-                var cropInfo = snapshot.data!.docs[index];
+            ),
+          ),
 
-                return CropCard(
-                  cropInfo: cropInfo,
-                  onUpdate: () {
-                    String cropID = cropInfo.id;
-                    navigateWithSlideFromRight(
-                      context,
-                      UpdateCrop(
-                        cropID: cropID,
-                      ),
-                      0.0,
-                      1.0,
-                    );
-                  },
-                  onDelete: () async {
-                    showDeleteWarning(
-                      context,
-                      'Are you sure you want to delete this crops?',
-                      'Delete',
-                          (cropID) => FirebaseService.deleteCrop(
-                          context, cropID: cropID),
-                      cropInfo.id,
+          // STREAM BUILDER FOR DATA
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('admin_accounts')
+                  .doc('crops_available')
+                  .collection('crops')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CustomLoadingIndicator();
+                }
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+                if (snapshot.data?.docs.isEmpty ?? true) {
+                  return const NoMarketAvailable(screenName: 'crops');
+                }
+
+                // FILTER CROPS BASED ON SEARCH QUERY
+                List<QueryDocumentSnapshot> filteredCrops = snapshot.data!.docs
+                    .where((doc) {
+                  String cropName = (doc['cropName'] ?? '').toString().toLowerCase();
+                  return cropName.contains(_searchQuery);
+                })
+                    .toList();
+
+                if (filteredCrops.isEmpty) {
+                  return const NoMarketAvailable(screenName: 'filtered crops');
+                }
+
+                return GridView.builder(
+                  padding: const EdgeInsets.all(10),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, // NUMBER OF COLUMNS
+                    crossAxisSpacing: 10, // HORIZONTAL SPACE BETWEEN CARDS
+                    mainAxisSpacing: 10, // VERTICAL SPACE BETWEEN CARDS
+                    childAspectRatio: 0.8, // ASPECT RATIO OF EACH CARD
+                  ),
+                  itemCount: filteredCrops.length,
+                  itemBuilder: (context, index) {
+                    var cropInfo = filteredCrops[index];
+
+                    return CropCard(
+                      cropInfo: cropInfo,
+                      onUpdate: () {
+                        String cropID = cropInfo.id;
+                        navigateWithSlideFromRight(
+                          context,
+                          UpdateCrop(
+                            cropID: cropID,
+                          ),
+                          0.0,
+                          1.0,
+                        );
+                      },
+                      onDelete: () async {
+                        showDeleteWarning(
+                          context,
+                          'Are you sure you want to delete this crop?',
+                          'Delete',
+                              (cropID) => FirebaseService.deleteCrop(
+                              context, cropID: cropID),
+                          cropInfo.id,
+                        );
+                      },
                     );
                   },
                 );
               },
-            );
-          }
-        },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: CustomFloatingActionButton(
         textLabel: "Add Crops",

@@ -13,6 +13,15 @@ class CropListScreen extends StatefulWidget {
 }
 
 class _CropListScreenState extends State<CropListScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,64 +37,125 @@ class _CropListScreenState extends State<CropListScreen> {
           },
         ),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('admin_accounts')
-            .doc('crops_available')
-            .collection('crops')
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CustomLoadingIndicator();
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          if (snapshot.data?.docs.isEmpty ?? true) {
-            return const NoMarketAvailable(
-              screenName: 'crops',
-            );
-          } else {
-            List<QueryDocumentSnapshot> sortedCrops = snapshot.data!.docs;
-            sortedCrops.sort((a, b) {
-              double aPrice = (a['retailPrice'] ?? 0).toDouble();
-              double bPrice = (b['retailPrice'] ?? 0).toDouble();
-              return bPrice.compareTo(aPrice); // Sort high to low
-            });
-
-            return GridView.builder(
-              padding: const EdgeInsets.all(10),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1,
-                crossAxisSpacing: 5,
-                mainAxisSpacing: 5,
-                childAspectRatio: 4.5,
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search crops...',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _searchQuery.isNotEmpty
+                    ? IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    setState(() {
+                      _searchController.clear();
+                      _searchQuery = '';
+                    });
+                  },
+                )
+                    : null,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xFF133c0b)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xFF133c0b), width: 2),
+                ),
+                filled: true,
+                fillColor: Colors.white,
               ),
-              itemCount: sortedCrops.length,
-              itemBuilder: (context, index) {
-                var cropInfo = sortedCrops[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HistoricalDataScreen(
-                          cropIds: sortedCrops
-                              .map((crop) => crop.id)
-                              .toList(), // Pass all crop IDs
-                          initialIndex: index, // Start with the tapped crop
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value.toLowerCase();
+                });
+              },
+            ),
+          ),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('admin_accounts')
+                  .doc('crops_available')
+                  .collection('crops')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CustomLoadingIndicator();
+                }
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+                if (snapshot.data?.docs.isEmpty ?? true) {
+                  return const NoMarketAvailable(
+                    screenName: 'crops',
+                  );
+                } else {
+                  List<QueryDocumentSnapshot> sortedCrops = snapshot.data!.docs;
+
+                  // Filter crops based on search query
+                  if (_searchQuery.isNotEmpty) {
+                    sortedCrops = sortedCrops.where((crop) {
+                      String cropName = (crop['cropName'] ?? '').toLowerCase();
+                      return cropName.contains(_searchQuery);
+                    }).toList();
+                  }
+
+                  // Sort filtered crops by price
+                  sortedCrops.sort((a, b) {
+                    double aPrice = (a['retailPrice'] ?? 0).toDouble();
+                    double bPrice = (b['retailPrice'] ?? 0).toDouble();
+                    return bPrice.compareTo(aPrice); // Sort high to low
+                  });
+
+                  if (sortedCrops.isEmpty) {
+                    return Center(
+                      child: Text(
+                        'No crops found matching "$_searchQuery"',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
                         ),
                       ),
                     );
-                  },
-                  child: Card(
-                    color: Colors.white,
-                    elevation: 2,
-                    margin: const EdgeInsets.all(8),
-                    child: ListTile(
-                      leading: cropInfo['cropImage'] != null &&
-                              cropInfo['cropImage'].isNotEmpty
-                          ? ClipRRect(
+                  }
+
+                  return GridView.builder(
+                    padding: const EdgeInsets.all(10),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 1,
+                      crossAxisSpacing: 5,
+                      mainAxisSpacing: 5,
+                      childAspectRatio: 4.5,
+                    ),
+                    itemCount: sortedCrops.length,
+                    itemBuilder: (context, index) {
+                      var cropInfo = sortedCrops[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HistoricalDataScreen(
+                                cropIds: sortedCrops
+                                    .map((crop) => crop.id)
+                                    .toList(),
+                                initialIndex: index,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Card(
+                          color: Colors.white,
+                          elevation: 2,
+                          margin: const EdgeInsets.all(8),
+                          child: ListTile(
+                            leading: cropInfo['cropImage'] != null &&
+                                cropInfo['cropImage'].isNotEmpty
+                                ? ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: Image.network(
                                 cropInfo['cropImage'],
@@ -94,7 +164,7 @@ class _CropListScreenState extends State<CropListScreen> {
                                 fit: BoxFit.cover,
                               ),
                             )
-                          : ClipRRect(
+                                : ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: Image.asset(
                                 'lib/ui/assets/no_image.jpeg',
@@ -103,22 +173,25 @@ class _CropListScreenState extends State<CropListScreen> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                      title: Text(
-                        cropInfo['cropName'] ?? 'Unknown Crop',
-                        style: const TextStyle(fontSize: 11),
-                      ),
-                      subtitle: Text(
-                        'Retail Price: ₱${cropInfo['retailPrice']?.toStringAsFixed(2) ?? '0.00'}',
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                      trailing: const Icon(Icons.arrow_forward),
-                    ),
-                  ),
-                );
+                            title: Text(
+                              cropInfo['cropName'] ?? 'Unknown Crop',
+                              style: const TextStyle(fontSize: 11),
+                            ),
+                            subtitle: Text(
+                              'Retail Price: ₱${cropInfo['retailPrice']?.toStringAsFixed(2) ?? '0.00'}',
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            trailing: const Icon(Icons.arrow_forward),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
               },
-            );
-          }
-        },
+            ),
+          ),
+        ],
       ),
     );
   }
