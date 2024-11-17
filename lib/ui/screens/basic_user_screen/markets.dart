@@ -58,7 +58,7 @@ class _MarketsState extends State<Markets> {
                 crossAxisCount: 1, // NUMBER OF COLUMNS
                 crossAxisSpacing: 10, // HORIZONTAL SPACE BETWEEN CARDS
                 mainAxisSpacing: 10, // VERTICAL SPACE BETWEEN CARDS
-                childAspectRatio: 1.5, // ASPECT RATIO OF EACH CARD
+                childAspectRatio: 1.4, // ASPECT RATIO OF EACH CARD
               ),
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {

@@ -459,6 +459,7 @@ class FirebaseService {
     return {};
   }
 
+
   // UPDATE: CROP
   static Future<void> updateCropInfo({
     // PARAMETERS NEEDED
@@ -502,7 +503,7 @@ class FirebaseService {
         'wholeSalePrice': wholeSalePrice,
         'landingPrice': landingPrice,
         'oldRetailPrice': oldRetailPrice,
-        'cropImage': cropImage ?? oldImageURL,
+        'cropImage': updatedImageURL ?? oldImageURL,
       });
 
       // Now save the price to the history for today's date

@@ -41,23 +41,23 @@ class CropReportCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(5),
                     child: imageURL != null && imageURL.isNotEmpty
                         ? FadeInImage(
-                            fit: BoxFit.cover,
-                            placeholder:
-                                const AssetImage("lib/ui/assets/no_image.jpeg"),
-                            image: NetworkImage(imageURL),
-                            imageErrorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                "lib/ui/assets/no_image.jpeg",
-                                fit: BoxFit.cover,
-                              );
-                            },
-                          )
+                      fit: BoxFit.cover,
+                      placeholder:
+                      const AssetImage("lib/ui/assets/no_image.jpeg"),
+                      image: NetworkImage(imageURL),
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          "lib/ui/assets/no_image.jpeg",
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    )
                         : const FadeInImage(
-                            fit: BoxFit.cover,
-                            placeholder:
-                                AssetImage("lib/ui/assets/no_image.jpeg"),
-                            image: AssetImage("lib/ui/assets/no_image.jpeg"),
-                          ),
+                      fit: BoxFit.cover,
+                      placeholder:
+                      AssetImage("lib/ui/assets/no_image.jpeg"),
+                      image: AssetImage("lib/ui/assets/no_image.jpeg"),
+                    ),
                   ),
                 ),
               ),
@@ -110,7 +110,7 @@ class CropReportCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(7),
                         ),
                         minimumSize:
-                            const Size(45, 35), // Adjusted for icon button
+                        const Size(45, 35), // Adjusted for icon button
                       ),
                       child: const Icon(
                         Icons.delete_outline_rounded,

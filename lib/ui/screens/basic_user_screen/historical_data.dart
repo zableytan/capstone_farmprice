@@ -8,8 +8,7 @@ import 'package:intl/intl.dart';
 class HistoricalDataScreen extends StatefulWidget {
   final List<String> cropIds;
 
-  const HistoricalDataScreen({Key? key, required this.cropIds})
-      : super(key: key);
+  const HistoricalDataScreen({super.key, required this.cropIds});
 
   @override
   _HistoricalDataScreenState createState() => _HistoricalDataScreenState();
@@ -199,7 +198,7 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
           ),
           // Navigation buttons
           Container(
-            margin: EdgeInsets.only(bottom: 10),
+            margin: const EdgeInsets.only(bottom: 10),
             child: Center(
               // Center the row
               child: Row(

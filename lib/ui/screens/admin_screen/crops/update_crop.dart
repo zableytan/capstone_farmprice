@@ -82,7 +82,7 @@ class _UpdateCropState extends State<UpdateCrop> {
 
     try {
       final data = await FirebaseService.getCropInfo(widget.cropID);
-
+      debugPrint("******** ${data['cropImage']} *********");
       if (mounted) {
         setState(() {
           _cropNameController.text = data['cropName'];
@@ -283,6 +283,7 @@ class _UpdateCropState extends State<UpdateCrop> {
               ),
             ),
             const SizedBox(height: 2),
+            // MARKET IMAGE SECTION
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.zero,
@@ -317,13 +318,14 @@ class _UpdateCropState extends State<UpdateCrop> {
                                   fit: BoxFit.cover,
                                 )
                               : Image.network(
-                                  imageULR!,
+                                  imageULR ??
+                                      '', // Check for imageULR null value
                                   width: double.infinity,
                                   height: 130,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) {
                                     return Image.asset(
-                                      "lib/ui/assets/no_image.jpeg",
+                                      "lib/ui/assets/no_image.jpeg", // Default image path
                                       fit: BoxFit.cover,
                                       height: 120,
                                       width: double.infinity,

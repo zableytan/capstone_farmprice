@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:myapp/ui/screens/admin_screen/crop_reports/crop_reports_screen.dart';
 import 'package:myapp/ui/screens/admin_screen/crops/crops_screen.dart';
+import 'package:myapp/ui/screens/admin_screen/market_trends/market_trends_screen.dart';
 import 'package:myapp/ui/screens/admin_screen/markets/markets_screen.dart';
 import 'package:myapp/ui/widgets/custom_icon.dart';
 import 'package:myapp/ui/widgets/modals/custom_modals.dart';
@@ -114,6 +115,24 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 },
                 'lib/ui/assets/crops_icon.png',
                 "Crops",
+                17,
+                FontWeight.normal,
+                Colors.white,
+                const Color(0xFF133c0b),
+                8,
+              ),
+              // MARKET TRENDS
+              _buildButtonContainers(
+                    () {
+                  navigateWithSlideFromRight(
+                    context,
+                    const MarketTrendsScreen(),
+                    1.0,
+                    0.0,
+                  );
+                },
+                'lib/ui/assets/market_trends_icon.png',
+                "Market Trends",
                 17,
                 FontWeight.normal,
                 Colors.white,

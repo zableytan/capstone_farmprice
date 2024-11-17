@@ -88,7 +88,7 @@ class UserCurrentPriceCard extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(width: 20),
+              const SizedBox(width: 10),
 
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,7 +97,7 @@ class UserCurrentPriceCard extends StatelessWidget {
                     cropName,
                     style: const TextStyle(
                       fontWeight: FontWeight.normal,
-                      fontSize: 20,
+                      fontSize: 15,
                     ),
                   ),
                   Text(
@@ -117,7 +117,7 @@ class UserCurrentPriceCard extends StatelessWidget {
                 '₱${retailPrice.toStringAsFixed(2)}',
                 style: const TextStyle(
                   fontWeight: FontWeight.normal,
-                  fontSize: 20,
+                  fontSize: 15,
                 ),
               ),
 

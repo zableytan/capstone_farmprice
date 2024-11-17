@@ -97,11 +97,11 @@ class UserMarketTrendsCard extends StatelessWidget {
                   style: const TextStyle(
                     color: Color(0xFF222227),
                     fontWeight: FontWeight.w500,
-                    fontSize: 20,
+                    fontSize: 15,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  minFontSize: 14,
+                  minFontSize: 12,
                 ),
               ),
 
@@ -110,11 +110,11 @@ class UserMarketTrendsCard extends StatelessWidget {
               // Third Column: Crop Name
               Expanded(
                 child: AutoSizeText(
-                  "₱ ${cropInfo['retailPrice'].toString()}",
-                  style: const TextStyle(
+                    "₱ ${double.tryParse(cropInfo['retailPrice'].toString())?.toStringAsFixed(2) ?? '0.00'}",
+                    style: const TextStyle(
                     color: Color(0xFF222227),
                     fontWeight: FontWeight.w500,
-                    fontSize: 20,
+                    fontSize: 15,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

@@ -52,19 +52,16 @@ class _UserCropReportState extends State<UserCropReport> {
             );
           } else {
             // DISPLAY AVAILABLE SERVICES: AS GRIDVIEW
-            return GridView.builder(
+            return ListView.builder(
               padding: const EdgeInsets.all(10),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1, // NUMBER OF COLUMNS
-                crossAxisSpacing: 10, // HORIZONTAL SPACE BETWEEN CARDS
-                mainAxisSpacing: 10, // VERTICAL SPACE BETWEEN CARDS
-                childAspectRatio: 1.4, // ASPECT RATIO OF EACH CARD
-              ),
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
                 var cropReportInfo = snapshot.data!.docs[index];
 
-                return UserCropReportCard(cropReportInfo: cropReportInfo);
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: UserCropReportCard(cropReportInfo: cropReportInfo),
+                );
               },
             );
           }
