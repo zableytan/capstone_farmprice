@@ -13,6 +13,9 @@ class CurrentPrices extends StatefulWidget {
 }
 
 class _CurrentPricesState extends State<CurrentPrices> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,57 +31,88 @@ class _CurrentPricesState extends State<CurrentPrices> {
           },
         ),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('admin_accounts')
-            .doc('crops_available')
-            .collection('crops')
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // DISPLAY CUSTOM LOADING INDICATOR
-            return const CustomLoadingIndicator();
-          }
-          // IF FETCHING DATA HAS ERROR EXECUTE THIS
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-
-          // CHECK IF THERE IS AVAILABLE DATA
-          if (snapshot.data?.docs.isEmpty ?? true) {
-            // DISPLAY THERE IS NO AVAILABLE DATA
-            return const NoMarketAvailable(
-              screenName: 'crops',
-            );
-          } else {
-            // SORT DATA BY 'retailPrice' IN DESCENDING ORDER
-            List<QueryDocumentSnapshot> sortedCrops = snapshot.data!.docs;
-            sortedCrops.sort((a, b) {
-              double aPrice = (a['retailPrice'] ?? 0).toDouble();
-              double bPrice = (b['retailPrice'] ?? 0).toDouble();
-              return bPrice.compareTo(aPrice); // Sort high to low
-            });
-
-            // DISPLAY SORTED DATA IN GRIDVIEW
-            return GridView.builder(
-              padding: const EdgeInsets.all(10),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1, // NUMBER OF COLUMNS
-                crossAxisSpacing: 5, // HORIZONTAL SPACE BETWEEN CARDS
-                mainAxisSpacing: 5, // VERTICAL SPACE BETWEEN CARDS
-                childAspectRatio: 4.5, // ASPECT RATIO OF EACH CARD
-              ),
-              itemCount: sortedCrops.length,
-              itemBuilder: (context, index) {
-                var cropInfo = sortedCrops[index];
-
-                return UserCurrentPriceCard(
-                  cropInfo: cropInfo,
-                );
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: TextField(
+              controller: _searchController,
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value.toLowerCase();
+                });
               },
-            );
-          }
-        },
+              decoration: InputDecoration(
+                hintText: 'Search crops...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+            ),
+          ),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('admin_accounts')
+                  .doc('crops_available')
+                  .collection('crops')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CustomLoadingIndicator();
+                }
+
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+
+                if (snapshot.data?.docs.isEmpty ?? true) {
+                  return const NoMarketAvailable(
+                    screenName: 'crops',
+                  );
+                } else {
+                  List<QueryDocumentSnapshot> sortedCrops = snapshot.data!.docs;
+                  sortedCrops.sort((a, b) {
+                    double aPrice = (a['retailPrice'] ?? 0).toDouble();
+                    double bPrice = (b['retailPrice'] ?? 0).toDouble();
+                    return bPrice.compareTo(aPrice); // Sort high to low
+                  });
+
+                  // Filter the sorted crops based on search query
+                  List<QueryDocumentSnapshot> filteredCrops = sortedCrops
+                      .where((crop) => (crop['cropName'] ?? '')
+                          .toString()
+                          .toLowerCase()
+                          .contains(_searchQuery))
+                      .toList();
+
+                  return GridView.builder(
+                    padding: const EdgeInsets.all(10),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 1,
+                      crossAxisSpacing: 5,
+                      mainAxisSpacing: 5,
+                      childAspectRatio: 4.5,
+                    ),
+                    itemCount: filteredCrops.length,
+                    itemBuilder: (context, index) {
+                      var cropInfo = filteredCrops[index];
+
+                      return UserCurrentPriceCard(
+                        cropInfo: cropInfo,
+                      );
+                    },
+                  );
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

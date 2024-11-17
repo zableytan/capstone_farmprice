@@ -34,7 +34,6 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     'Markets',
   ];
 
-  // Firestore instance to fetch crop data
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<List<String>> _getCropIds() async {
@@ -43,15 +42,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           .collection('admin_accounts')
           .doc('crops_available')
           .collection('crops')
-          .get(); // Correct path to fetch crops
-      print(
-          "Fetched documents: ${snapshot.docs.map((doc) => doc.id).toList()}");
-
-      List<String> cropIds = [];
-      for (var doc in snapshot.docs) {
-        cropIds.add(doc.id); // Assuming the document ID is the crop ID
-      }
-      return cropIds;
+          .get();
+      return snapshot.docs.map((doc) => doc.id).toList();
     } catch (e) {
       print("Error fetching crop IDs: $e");
       return [];
@@ -65,7 +57,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
         automaticallyImplyLeading: false,
       ),
       body: FutureBuilder<List<String>>(
-        future: _getCropIds(), // Fetch crop IDs asynchronously
+        future: _getCropIds(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CustomLoadingIndicator());
@@ -74,7 +66,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text("No crops available"));
           } else {
-            List<String> cropIds = snapshot.data!; // The list of crop IDs
+            List<String> cropIds = snapshot.data!;
             return Column(
               children: [
                 Padding(
@@ -89,28 +81,28 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: _getCrossAxisCount(context),
-                        crossAxisSpacing: 10.0,
-                        mainAxisSpacing: 10.0,
-                        childAspectRatio: 0.9,
-                      ),
+                    child: ListView.builder(
                       itemCount: 6,
                       itemBuilder: (context, index) {
                         return GestureDetector(
                           onTap: () {
                             _navigateToUniqueScreen(context, index, cropIds);
                           },
-                          child: Card(
-                            color: const Color.fromARGB(255, 123, 159, 76),
-                            elevation: 5.0,
-                            shape: RoundedRectangleBorder(
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 10.0),
+                            padding: const EdgeInsets.all(15.0),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 123, 159, 76),
                               borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 5.0,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
                             ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                            child: Row(
                               children: [
                                 Image.asset(
                                   cardImages[index],
@@ -118,7 +110,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                   height: 50,
                                   fit: BoxFit.cover,
                                 ),
-                                const SizedBox(height: 20),
+                                const SizedBox(width: 20),
                                 Text(
                                   cardTexts[index],
                                   style: const TextStyle(
@@ -144,7 +136,6 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     );
   }
 
-  // Helper method to navigate to a unique screen based on the card index
   void _navigateToUniqueScreen(
       BuildContext context, int index, List<String> cropIds) {
     switch (index) {
@@ -158,8 +149,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => HistoricalDataScreen(
-                cropIds: cropIds), // Pass crop IDs to the next screen
+            builder: (context) => HistoricalDataScreen(cropIds: cropIds),
           ),
         );
         break;
@@ -187,18 +177,6 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           MaterialPageRoute(builder: (context) => const Markets()),
         );
         break;
-    }
-  }
-
-  // Helper method to determine the number of columns based on screen width
-  int _getCrossAxisCount(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    if (width < 600) {
-      return 2; // 2 columns for small screens (e.g., phones)
-    } else if (width < 1200) {
-      return 3; // 3 columns for medium screens (e.g., tablets)
-    } else {
-      return 4; // 4 columns for large screens (e.g., tablets in landscape or small desktops)
     }
   }
 }

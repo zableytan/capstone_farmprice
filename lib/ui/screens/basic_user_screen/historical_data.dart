@@ -76,7 +76,7 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
         final date = DateFormat('MM/dd/yyyy')
             .format(now.subtract(Duration(days: index)));
         final priceDataForDate = data.firstWhere(
-              (item) => item.date == date,
+          (item) => item.date == date,
           orElse: () => _PriceData(date, 0), // If no data, default price 0
         );
         return priceDataForDate;
@@ -125,132 +125,132 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
       body: isLoading
           ? const Center(child: CustomLoadingIndicator())
           : Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.only(
-              top: 35,
-              left: 35,
-              right: 35,
-              bottom: 0,
-            ),
-            child: cropImage.isNotEmpty
-                ? ClipRRect(
-              borderRadius:
-              BorderRadius.circular(12), // Adjust corner round
-              child: Image.network(
-                cropImage,
-                height: 120,
-                width: MediaQuery.sizeOf(context)
-                    .width, // Set a fixed width
-                fit: BoxFit.fitWidth, // Maintain aspect ratio
-              ),
-            )
-                : ClipRRect(
-              borderRadius:
-              BorderRadius.circular(12), // Adjust corner round
-              child: Image.asset(
-                "lib/ui/assets/no_image.jpeg",
-                height: 150, // Set a fixed height for placeholder
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-
-          const SizedBox(
-            height: 5,
-          ),
-          // Crop Name
-          Center(
-            child: Text(
-              cropName,
-              style: const TextStyle(
-                  fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ),
-          const SizedBox(height: 5),
-
-          // Chart displaying historical price data
-          Expanded(
-            child: SfCartesianChart(
-              primaryXAxis: const CategoryAxis(
-                title: AxisTitle(text: 'Date'),
-              ),
-              primaryYAxis: const NumericAxis(
-                title: AxisTitle(text: 'Price'),
-                minimum: 0,
-                interval: 10,
-              ),
-              legend: const Legend(isVisible: true),
-              tooltipBehavior: _tooltip,
-              series: <CartesianSeries<_PriceData, String>>[
-                ColumnSeries<_PriceData, String>(
-                  dataSource: priceData,
-                  xValueMapper: (_PriceData data, _) => data.date,
-                  yValueMapper: (_PriceData data, _) => data.price,
-                  name: 'Price',
-                  dataLabelSettings:
-                  const DataLabelSettings(isVisible: true),
-                  color: const Color.fromARGB(255, 53, 117, 41)
-                      .withOpacity(0.5),
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(
+                    top: 35,
+                    left: 35,
+                    right: 35,
+                    bottom: 0,
+                  ),
+                  child: cropImage.isNotEmpty
+                      ? ClipRRect(
+                          borderRadius:
+                              BorderRadius.circular(12), // Adjust corner round
+                          child: Image.network(
+                            cropImage,
+                            height: 120,
+                            width: MediaQuery.sizeOf(context)
+                                .width, // Set a fixed width
+                            fit: BoxFit.fitWidth, // Maintain aspect ratio
+                          ),
+                        )
+                      : ClipRRect(
+                          borderRadius:
+                              BorderRadius.circular(12), // Adjust corner round
+                          child: Image.asset(
+                            "lib/ui/assets/no_image.jpeg",
+                            height: 150, // Set a fixed height for placeholder
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                 ),
+
+                const SizedBox(
+                  height: 5,
+                ),
+                // Crop Name
+                Center(
+                  child: Text(
+                    cropName,
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(height: 5),
+
+                // Chart displaying historical price data
+                Expanded(
+                  child: SfCartesianChart(
+                    primaryXAxis: const CategoryAxis(
+                      title: AxisTitle(text: 'Date'),
+                    ),
+                    primaryYAxis: const NumericAxis(
+                      title: AxisTitle(text: 'Price'),
+                      minimum: 0,
+                      interval: 10,
+                    ),
+                    legend: const Legend(isVisible: true),
+                    tooltipBehavior: _tooltip,
+                    series: <CartesianSeries<_PriceData, String>>[
+                      ColumnSeries<_PriceData, String>(
+                        dataSource: priceData,
+                        xValueMapper: (_PriceData data, _) => data.date,
+                        yValueMapper: (_PriceData data, _) => data.price,
+                        name: 'Price',
+                        dataLabelSettings:
+                            const DataLabelSettings(isVisible: true),
+                        color: const Color.fromARGB(255, 53, 117, 41)
+                            .withOpacity(0.5),
+                      ),
+                    ],
+                  ),
+                ),
+                // Navigation buttons
+                Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child: Center(
+                    // Center the row
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment
+                          .center, // Center the buttons horizontally
+                      children: [
+                        ElevatedButton(
+                          onPressed: currentIndex > 0 ? _previousCrop : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 53, 117, 41)
+                                    .withOpacity(0.5), // Set button color
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  20), // Set corner radius (curves the corners)
+                            ),
+                          ),
+                          child: const Text(
+                            'Previous Crop',
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                            width: 10), // Add some space between the buttons
+                        ElevatedButton(
+                          onPressed: currentIndex < widget.cropIds.length - 1
+                              ? _nextCrop
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 53, 117, 41)
+                                    .withOpacity(0.5),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  20), // Set corner radius (curves the corners)
+                            ),
+                          ),
+                          child: const Text(
+                            'Next Crop',
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
               ],
             ),
-          ),
-          // Navigation buttons
-          Container(
-            margin: const EdgeInsets.only(bottom: 10),
-            child: Center(
-              // Center the row
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment
-                    .center, // Center the buttons horizontally
-                children: [
-                  ElevatedButton(
-                    onPressed: currentIndex > 0 ? _previousCrop : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                      const Color.fromARGB(255, 53, 117, 41)
-                          .withOpacity(0.5), // Set button color
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            20), // Set corner radius (curves the corners)
-                      ),
-                    ),
-                    child: const Text(
-                      'Previous Crop',
-                      style: TextStyle(
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                      width: 10), // Add some space between the buttons
-                  ElevatedButton(
-                    onPressed: currentIndex < widget.cropIds.length - 1
-                        ? _nextCrop
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                      const Color.fromARGB(255, 53, 117, 41)
-                          .withOpacity(0.5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            20), // Set corner radius (curves the corners)
-                      ),
-                    ),
-                    child: const Text(
-                      'Next Crop',
-                      style: TextStyle(
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
-        ],
-      ),
     );
   }
 }
