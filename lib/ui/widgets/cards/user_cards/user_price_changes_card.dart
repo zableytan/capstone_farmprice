@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:myapp/ui/screens/basic_user_screen/crop_detail_screen.dart';
@@ -95,12 +96,14 @@ class UserPriceChangesCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  AutoSizeText(
                     cropName,
                     style: const TextStyle(
                       fontWeight: FontWeight.normal,
-                      fontSize: 16,
+                      fontSize: 16, // You can set a max font size here
                     ),
+                    maxLines: 1, // Ensure the text stays on one line
+                    minFontSize: 10, // Minimum font size when text is too long
                   ),
                   Text(
                     DateFormat('MM/dd/yyyy').format(DateTime.now()),
