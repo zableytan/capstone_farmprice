@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:myapp/ui/screens/basic_user_screen/crop_list_screen.dart';
 import 'package:myapp/ui/screens/basic_user_screen/crop_report.dart';
 import 'package:myapp/ui/screens/basic_user_screen/current_prices.dart';
 import 'package:myapp/ui/screens/basic_user_screen/historical_data.dart';
@@ -158,8 +159,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => HistoricalDataScreen(
-                cropIds: cropIds), // Pass crop IDs to the next screen
+            builder: (context) => const CropListScreen(),
           ),
         );
         break;
