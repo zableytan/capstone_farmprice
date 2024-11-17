@@ -417,6 +417,17 @@ class FirebaseService {
           .doc(cropID)
           .set(cropsData);
 
+      await FirebaseFirestore.instance
+          .collection('admin_accounts')
+          .doc('crops_available')
+          .collection('crops')
+          .doc(cropID)
+          .collection('crop_price_history')
+          .add({
+        'date': Timestamp.fromDate(DateTime.now()), // Save today's date
+        'price': retailPrice, // Save the updated retail price
+      });
+
       // IF CREATING SERVICE SUCCESSFUL
       if (context.mounted) {
         // Dismiss loading dialog
