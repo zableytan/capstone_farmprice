@@ -7,6 +7,7 @@ import 'package:myapp/ui/screens/admin_screen/markets/markets_screen.dart';
 import 'package:myapp/ui/widgets/custom_icon.dart';
 import 'package:myapp/ui/widgets/modals/custom_modals.dart';
 import 'package:myapp/ui/widgets/navigation/custom_navigation.dart';
+import 'package:url_launcher/url_launcher.dart'; // Import for downloading reports
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
@@ -16,6 +17,29 @@ class AdminHomeScreen extends StatefulWidget {
 }
 
 class _AdminHomeScreenState extends State<AdminHomeScreen> {
+  // Function to handle report download
+  Future<void> downloadReport() async {
+    const url =
+        'https://script.google.com/macros/s/AKfycbx-jPw7RQdp-cNGVVJ3PSUBYiDHeTGOaxkSDNjzdjosGezQz8q7OvcWSWPpZMWHT12IJA/exec'; // Replace with your script URL
+
+    try {
+      if (await canLaunch(url)) {
+        await launch(url);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content:
+                  Text('Download started. Check your browser for the file.')),
+        );
+      } else {
+        throw 'Could not launch $url';
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to start download: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -69,7 +93,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
             children: <Widget>[
               // MARKETS
               _buildButtonContainers(
-                    () {
+                () {
                   navigateWithSlideFromRight(
                     context,
                     const MarketsScreen(),
@@ -87,7 +111,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               ),
               // CROP REPORT
               _buildButtonContainers(
-                    () {
+                () {
                   navigateWithSlideFromRight(
                     context,
                     const CropReportsScreen(),
@@ -105,7 +129,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               ),
               // CROPS
               _buildButtonContainers(
-                    () {
+                () {
                   navigateWithSlideFromRight(
                     context,
                     const CropsScreen(),
@@ -123,7 +147,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               ),
               // MARKET TRENDS
               _buildButtonContainers(
-                    () {
+                () {
                   navigateWithSlideFromRight(
                     context,
                     const MarketTrendsScreen(),
@@ -139,6 +163,17 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 const Color(0xFF133c0b),
                 8,
               ),
+              // DOWNLOAD REPORT
+              _buildButtonContainers(
+                downloadReport,
+                'lib/ui/assets/report_icon.png', // Use a report icon here
+                "Download Report",
+                17,
+                FontWeight.normal,
+                Colors.white,
+                const Color(0xFF133c0b),
+                8,
+              ),
             ],
           ),
         ),
@@ -146,16 +181,17 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     );
   }
 
+  // Reusable button container
   Widget _buildButtonContainers(
-      VoidCallback onPressed,
-      String imageSource,
-      String buttonLabel,
-      double fontSize,
-      FontWeight fontWeight,
-      Color fontColor,
-      Color buttonColor,
-      double borderRadius,
-      ) {
+    VoidCallback onPressed,
+    String imageSource,
+    String buttonLabel,
+    double fontSize,
+    FontWeight fontWeight,
+    Color fontColor,
+    Color buttonColor,
+    double borderRadius,
+  ) {
     return Container(
       margin: const EdgeInsets.only(top: 10, bottom: 5),
       height: 55,
