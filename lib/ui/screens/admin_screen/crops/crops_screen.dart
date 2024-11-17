@@ -89,9 +89,8 @@ class _CropsScreenState extends State<CropsScreen> {
                       context,
                       'Are you sure you want to delete this crops?',
                       'Delete',
-                          (cropReportsID) => FirebaseService.deleteCropReport(
-                          context,
-                          marketID: cropReportsID),
+                          (cropID) => FirebaseService.deleteCrop(
+                          context, cropID: cropID),
                       cropInfo.id,
                     );
                   },
