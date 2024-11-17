@@ -100,7 +100,7 @@ class UserPriceChangesCard extends StatelessWidget {
                     cropName,
                     style: const TextStyle(
                       fontWeight: FontWeight.normal,
-                      fontSize: 16, // You can set a max font size here
+                      fontSize: 13, // You can set a max font size here
                     ),
                     maxLines: 1, // Ensure the text stays on one line
                     minFontSize: 10, // Minimum font size when text is too long
