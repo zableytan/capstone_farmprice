@@ -18,12 +18,21 @@ class UserHomeScreen extends StatefulWidget {
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
   final List<String> cardImages = [
+<<<<<<< HEAD
     "lib/ui/assets/card_one_icon.png", // Current Prices
     "lib/ui/assets/card_five_icon.png", // Price Changes
     "lib/ui/assets/card_three_icon.png", // Market Trends
     "lib/ui/assets/card_two_icon.png", // Historical Data
     "lib/ui/assets/card_four_icon.png", // Crop Reports
     "lib/ui/assets/card_six_icon.png", // Markets
+=======
+    "lib/ui/assets/card_one_icon.png",      // Current Prices
+    "lib/ui/assets/card_five_icon.png",     // Price Changes
+    "lib/ui/assets/card_three_icon.png",    // Market Trends
+    "lib/ui/assets/card_two_icon.png",      // Historical Data
+    "lib/ui/assets/card_four_icon.png",     // Crop Reports
+    "lib/ui/assets/card_six_icon.png",      // Markets
+>>>>>>> 36015d6 (Update project with latest changes)
   ];
 
   final List<String> cardTexts = [
@@ -36,6 +45,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   ];
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 36015d6 (Update project with latest changes)
   final List<String> cardDescriptions = [
     'Real-time crop pricing',
     'Detailed price fluctuation analysis',
@@ -45,6 +57,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     'Explore agricultural market locations',
   ];
 
+<<<<<<< HEAD
 =======
   // New list of descriptive subtitles
   final List<String> cardDescriptions = [
@@ -58,6 +71,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
 
   // Updated gradient colors using green palette
 >>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
+=======
+>>>>>>> 36015d6 (Update project with latest changes)
   final List<List<Color>> cardGradients = [
     [
       const Color.fromARGB(255, 123, 159, 76),
@@ -65,12 +80,17 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     ],
     [
 <<<<<<< HEAD
+<<<<<<< HEAD
       const Color.fromARGB(255, 83, 119, 36),
       const Color.fromARGB(255, 103, 139, 56),
 =======
       const Color.fromARGB(255, 113, 149, 66),
       const Color.fromARGB(255, 133, 169, 86),
 >>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
+=======
+      const Color.fromARGB(255, 83, 119, 36),
+      const Color.fromARGB(255, 103, 139, 56),
+>>>>>>> 36015d6 (Update project with latest changes)
     ],
     [
       const Color.fromARGB(255, 103, 139, 56),
@@ -78,16 +98,23 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     ],
     [
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 36015d6 (Update project with latest changes)
       const Color.fromARGB(255, 113, 149, 66),
       const Color.fromARGB(255, 133, 169, 86),
     ],
     [
+<<<<<<< HEAD
 =======
 >>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
+=======
+>>>>>>> 36015d6 (Update project with latest changes)
       const Color.fromARGB(255, 93, 129, 46),
       const Color.fromARGB(255, 113, 149, 66),
     ],
     [
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
       const Color.fromARGB(255, 83, 119, 36),
@@ -95,6 +122,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     ],
     [
 >>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
+=======
+>>>>>>> 36015d6 (Update project with latest changes)
       const Color.fromARGB(255, 73, 109, 26),
       const Color.fromARGB(255, 93, 129, 46),
     ],
@@ -110,11 +139,15 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           .collection('crops')
           .get();
 <<<<<<< HEAD
+<<<<<<< HEAD
       print(
           "Fetched documents: ${snapshot.docs.map((doc) => doc.id).toList()}");
 =======
       print("Fetched documents: ${snapshot.docs.map((doc) => doc.id).toList()}");
 >>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
+=======
+      print("Fetched documents: ${snapshot.docs.map((doc) => doc.id).toList()}");
+>>>>>>> 36015d6 (Update project with latest changes)
 
       List<String> cropIds = [];
       for (var doc in snapshot.docs) {
@@ -131,10 +164,14 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
 <<<<<<< HEAD
+<<<<<<< HEAD
       backgroundColor: Colors.grey[100],
 =======
       backgroundColor: Colors.grey[100], // Light background to make cards pop
 >>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
+=======
+      backgroundColor: Colors.grey[100],
+>>>>>>> 36015d6 (Update project with latest changes)
       appBar: AppBar(
         title: const Text(
           'Home',
@@ -239,6 +276,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   void _navigateToUniqueScreen(
       BuildContext context, int index, List<String> cropIds) {
     switch (index) {
@@ -294,3 +332,28 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   }
 }
 >>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
+=======
+  void _navigateToUniqueScreen(BuildContext context, int index, List<String> cropIds) {
+    switch (index) {
+      case 0:
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const CurrentPrices()));
+        break;
+      case 1:
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const PriceChanges()));
+        break;
+      case 2:
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const MarketTrends()));
+        break;
+      case 3:
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const CropListScreen()));
+        break;
+      case 4:
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const UserCropReport()));
+        break;
+      case 5:
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const Markets()));
+        break;
+    }
+  }
+}
+>>>>>>> 36015d6 (Update project with latest changes)

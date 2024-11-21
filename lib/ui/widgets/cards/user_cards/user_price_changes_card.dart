@@ -137,7 +137,7 @@ class UserPriceChangesCard extends StatelessWidget {
                     children: [
                       Icon(
                         isPriceUp ? Icons.arrow_upward : Icons.arrow_downward,
-                        color: isPriceUp ? Colors.green : Colors.red,
+                        color: isPriceUp ? Colors.green[700] : Colors.red,
                         size: 16,
                       ),
                       const SizedBox(width: 5),
@@ -145,7 +145,7 @@ class UserPriceChangesCard extends StatelessWidget {
                         '₱${priceDifference.abs().toStringAsFixed(2)}',
                         style: TextStyle(
                           fontSize: 14,
-                          color: isPriceUp ? Colors.green : Colors.red,
+                          color: isPriceUp ? Colors.green[700] : Colors.red,
                         ),
                       ),
                     ],

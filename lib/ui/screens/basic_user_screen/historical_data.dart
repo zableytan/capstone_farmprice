@@ -63,6 +63,7 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
         allCrops = cropsSnapshot.docs
             .map((doc) => {
 <<<<<<< HEAD
+<<<<<<< HEAD
                   'id': doc.id,
                   'cropName': doc.data()['cropName'] ?? 'Unknown Crop',
                 })
@@ -71,6 +72,11 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
           'cropName': doc.data()['cropName'] ?? 'Unknown Crop',
         })
 >>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
+=======
+          'id': doc.id,
+          'cropName': doc.data()['cropName'] ?? 'Unknown Crop',
+        })
+>>>>>>> 36015d6 (Update project with latest changes)
             .toList();
       });
     } catch (e) {
@@ -89,18 +95,24 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
         filteredCropIds = allCrops
             .where((crop) =>
 <<<<<<< HEAD
+<<<<<<< HEAD
                 crop['cropName']
                     .toString()
                     .toLowerCase()
                     .contains(query.toLowerCase()) &&
                 widget.cropIds.contains(crop['id']))
 =======
+=======
+>>>>>>> 36015d6 (Update project with latest changes)
         crop['cropName']
             .toString()
             .toLowerCase()
             .contains(query.toLowerCase()) &&
             widget.cropIds.contains(crop['id']))
+<<<<<<< HEAD
 >>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
+=======
+>>>>>>> 36015d6 (Update project with latest changes)
             .map((crop) => crop['id'] as String)
             .toList();
       }
@@ -154,12 +166,17 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
       final now = DateTime.now();
       final past5Days = List.generate(5, (index) {
 <<<<<<< HEAD
+<<<<<<< HEAD
         final date = DateFormat('MM/dd/yyyy')
             .format(now.subtract(Duration(days: index)));
 =======
         final date =
         DateFormat('MM/dd/yyyy').format(now.subtract(Duration(days: index)));
 >>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
+=======
+        final date =
+        DateFormat('MM/dd/yyyy').format(now.subtract(Duration(days: index)));
+>>>>>>> 36015d6 (Update project with latest changes)
         return data.firstWhere(
           (item) => item.date == date,
           orElse: () => _PriceData(date, 0),
@@ -201,10 +218,14 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
           backgroundColor: const Color(0xFF133c0b).withOpacity(0.3),
           titleText:
 <<<<<<< HEAD
+<<<<<<< HEAD
               cropName.isNotEmpty ? "Data for $cropName" : "Historical Data",
 =======
           cropName.isNotEmpty ? "Data for $cropName" : "Historical Data",
 >>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
+=======
+          cropName.isNotEmpty ? "Data for $cropName" : "Historical Data",
+>>>>>>> 36015d6 (Update project with latest changes)
           fontColor: const Color(0xFF3C4D48),
           onLeadingPressed: () => Navigator.pop(context),
         ),
@@ -226,11 +247,15 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
 <<<<<<< HEAD
+<<<<<<< HEAD
                   borderSide:
                       const BorderSide(color: Color(0xFF133c0b), width: 2),
 =======
                   borderSide: const BorderSide(color: Color(0xFF133c0b), width: 2),
 >>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
+=======
+                  borderSide: const BorderSide(color: Color(0xFF133c0b), width: 2),
+>>>>>>> 36015d6 (Update project with latest changes)
                 ),
               ),
               onChanged: _handleSearch,
@@ -252,6 +277,7 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
               child: isLoading
                   ? const Center(child: CustomLoadingIndicator())
                   : errorMessage.isNotEmpty
+<<<<<<< HEAD
 <<<<<<< HEAD
                       ? Center(child: Text(errorMessage))
                       : Column(
@@ -344,6 +370,8 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
                           ],
                         ),
 =======
+=======
+>>>>>>> 36015d6 (Update project with latest changes)
                   ? Center(child: Text(errorMessage))
                   : Column(
                 children: [
@@ -434,7 +462,10 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
                   const SizedBox(height: 10),
                 ],
               ),
+<<<<<<< HEAD
 >>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
+=======
+>>>>>>> 36015d6 (Update project with latest changes)
             ),
         ],
       ),

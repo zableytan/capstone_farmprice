@@ -78,9 +78,15 @@ class _PriceChangesState extends State<PriceChanges> {
                   // Filter and sort crops
                   sortedCrops = sortedCrops
                       .where((crop) => (crop['cropName'] ?? '')
+<<<<<<< HEAD
                           .toString()
                           .toLowerCase()
                           .contains(_searchQuery))
+=======
+                      .toString()
+                      .toLowerCase()
+                      .contains(_searchQuery))
+>>>>>>> 36015d6 (Update project with latest changes)
                       .toList();
 
                   sortedCrops.sort((a, b) {
@@ -92,11 +98,15 @@ class _PriceChangesState extends State<PriceChanges> {
                   return GridView.builder(
                     padding: const EdgeInsets.all(10),
 <<<<<<< HEAD
+<<<<<<< HEAD
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
 =======
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
 >>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
+=======
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+>>>>>>> 36015d6 (Update project with latest changes)
                       crossAxisCount: 1, // NUMBER OF COLUMNS
                       crossAxisSpacing: 5, // HORIZONTAL SPACE BETWEEN CARDS
                       mainAxisSpacing: 5, // VERTICAL SPACE BETWEEN CARDS

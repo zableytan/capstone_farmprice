@@ -49,6 +49,7 @@ class _CropListScreenState extends State<CropListScreen> {
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
 <<<<<<< HEAD
+<<<<<<< HEAD
                         icon: const Icon(Icons.clear),
                         onPressed: () {
                           setState(() {
@@ -58,6 +59,8 @@ class _CropListScreenState extends State<CropListScreen> {
                         },
                       )
 =======
+=======
+>>>>>>> 36015d6 (Update project with latest changes)
                   icon: const Icon(Icons.clear),
                   onPressed: () {
                     setState(() {
@@ -66,7 +69,10 @@ class _CropListScreenState extends State<CropListScreen> {
                     });
                   },
                 )
+<<<<<<< HEAD
 >>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
+=======
+>>>>>>> 36015d6 (Update project with latest changes)
                     : null,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -75,11 +81,15 @@ class _CropListScreenState extends State<CropListScreen> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
 <<<<<<< HEAD
+<<<<<<< HEAD
                   borderSide:
                       const BorderSide(color: Color(0xFF133c0b), width: 2),
 =======
                   borderSide: const BorderSide(color: Color(0xFF133c0b), width: 2),
 >>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
+=======
+                  borderSide: const BorderSide(color: Color(0xFF133c0b), width: 2),
+>>>>>>> 36015d6 (Update project with latest changes)
                 ),
                 filled: true,
                 fillColor: Colors.white,
@@ -142,11 +152,15 @@ class _CropListScreenState extends State<CropListScreen> {
                   return GridView.builder(
                     padding: const EdgeInsets.all(10),
 <<<<<<< HEAD
+<<<<<<< HEAD
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
 =======
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
 >>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
+=======
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+>>>>>>> 36015d6 (Update project with latest changes)
                       crossAxisCount: 1,
                       crossAxisSpacing: 5,
                       mainAxisSpacing: 5,
@@ -161,6 +175,7 @@ class _CropListScreenState extends State<CropListScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => HistoricalDataScreen(
+<<<<<<< HEAD
 <<<<<<< HEAD
                                 cropIds:
                                     sortedCrops.map((crop) => crop.id).toList(),
@@ -195,6 +210,8 @@ class _CropListScreenState extends State<CropListScreen> {
                                     ),
                                   ),
 =======
+=======
+>>>>>>> 36015d6 (Update project with latest changes)
                                 cropIds: sortedCrops.map((crop) => crop.id).toList(),
                                 initialIndex: index,
                               ),
@@ -226,7 +243,10 @@ class _CropListScreenState extends State<CropListScreen> {
                                 fit: BoxFit.cover,
                               ),
                             ),
+<<<<<<< HEAD
 >>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
+=======
+>>>>>>> 36015d6 (Update project with latest changes)
                             title: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [

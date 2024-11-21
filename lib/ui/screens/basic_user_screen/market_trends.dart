@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/ui/widgets/app_bar/custom_app_bar.dart';
-import 'package:myapp/ui/widgets/cards/user_cards/user_market_trends_card.dart';
 import 'package:myapp/ui/widgets/custom_loading_indicator_v2.dart';
 import 'package:myapp/ui/widgets/no_market_available.dart';
+import 'package:myapp/ui/widgets/cards/user_cards/user_market_trends_card.dart';
 
 class MarketTrends extends StatefulWidget {
   const MarketTrends({super.key});
@@ -24,7 +24,7 @@ class _MarketTrendsState extends State<MarketTrends> {
           titleText: "Market Trends",
           fontColor: const Color(0xFF3C4D48),
           onLeadingPressed: () {
-            Navigator.pop(context); // Safely pops to the previous screen
+            Navigator.pop(context);
           },
         ),
       ),
@@ -33,46 +33,42 @@ class _MarketTrendsState extends State<MarketTrends> {
             .collection('admin_accounts')
             .doc('trend_market')
             .collection('trend_crops')
-            .orderBy('ranking')  // Sort by 'ranking' field
+            .orderBy('ranking')
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            // DISPLAY CUSTOM LOADING INDICATOR
             return const CustomLoadingIndicator();
           }
-          // IF FETCHING DATA HAS ERROR EXECUTE THIS
+
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
 
-          // CHECK IF THERE IS AVAILABLE DATA
           if (snapshot.data?.docs.isEmpty ?? true) {
-            // DISPLAY THERE IS NO AVAILABLE DATA
             return const NoMarketAvailable(
               screenName: 'trend market',
             );
-          } else {
-            // DISPLAY AVAILABLE SERVICES: AS GRIDVIEW
-            return GridView.builder(
-              padding: const EdgeInsets.all(10),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1, // NUMBER OF COLUMNS
-                crossAxisSpacing: 10, // HORIZONTAL SPACE BETWEEN CARDS
-                mainAxisSpacing: 10, // VERTICAL SPACE BETWEEN CARDS
-                childAspectRatio: 4, // ASPECT RATIO OF EACH CARD
-              ),
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (context, index) {
-                var cropInfo = snapshot.data!.docs[index];
-
-                return UserMarketTrendsCard(
-                  cropInfo: cropInfo,
-                );
-              },
-            );
           }
+
+          return GridView.builder(
+            padding: const EdgeInsets.all(10),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 1,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              childAspectRatio: 4,
+            ),
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              var cropInfo = snapshot.data!.docs[index];
+              return UserMarketTrendsCard(
+                cropInfo: cropInfo,
+              );
+            },
+          );
         },
       ),
     );
   }
 }
+

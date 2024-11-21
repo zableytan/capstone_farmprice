@@ -71,6 +71,7 @@ class _CurrentPricesState extends State<CurrentPrices> {
                   suffixIcon: _searchQuery.isNotEmpty
                       ? IconButton(
 <<<<<<< HEAD
+<<<<<<< HEAD
                           icon: const Icon(Icons.clear),
                           onPressed: () {
                             setState(() {
@@ -80,6 +81,8 @@ class _CurrentPricesState extends State<CurrentPrices> {
                           },
                         )
 =======
+=======
+>>>>>>> 36015d6 (Update project with latest changes)
                     icon: const Icon(Icons.clear),
                     onPressed: () {
                       setState(() {
@@ -88,7 +91,10 @@ class _CurrentPricesState extends State<CurrentPrices> {
                       });
                     },
                   )
+<<<<<<< HEAD
 >>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
+=======
+>>>>>>> 36015d6 (Update project with latest changes)
                       : null,
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(
@@ -130,11 +136,15 @@ class _CurrentPricesState extends State<CurrentPrices> {
                 if (_searchQuery.isNotEmpty) {
                   sortedCrops = sortedCrops.where((crop) {
 <<<<<<< HEAD
+<<<<<<< HEAD
                     final cropName =
                         (crop['cropName'] ?? '').toString().toLowerCase();
 =======
                     final cropName = (crop['cropName'] ?? '').toString().toLowerCase();
 >>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
+=======
+                    final cropName = (crop['cropName'] ?? '').toString().toLowerCase();
+>>>>>>> 36015d6 (Update project with latest changes)
                     return cropName.contains(_searchQuery);
                   }).toList();
                 }
