@@ -30,7 +30,7 @@ class _CropListScreenState extends State<CropListScreen> {
         preferredSize: Size.fromHeight(AppBar().preferredSize.height),
         child: CustomAppBar(
           backgroundColor: const Color(0xFF133c0b).withOpacity(0.3),
-          titleText: "Prices Today",
+          titleText: "Historical Data", // Changed from "Prices Today"
           fontColor: const Color(0xFF3C4D48),
           onLeadingPressed: () {
             Navigator.pop(context);
@@ -140,9 +140,7 @@ class _CropListScreenState extends State<CropListScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => HistoricalDataScreen(
-                                cropIds: sortedCrops
-                                    .map((crop) => crop.id)
-                                    .toList(),
+                                cropIds: sortedCrops.map((crop) => crop.id).toList(),
                                 initialIndex: index,
                               ),
                             ),
@@ -173,13 +171,19 @@ class _CropListScreenState extends State<CropListScreen> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            title: Text(
-                              cropInfo['cropName'] ?? 'Unknown Crop',
-                              style: const TextStyle(fontSize: 11),
-                            ),
-                            subtitle: Text(
-                              'Retail Price: ₱${cropInfo['retailPrice']?.toStringAsFixed(2) ?? '0.00'}',
-                              style: const TextStyle(fontSize: 12),
+                            title: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    '${cropInfo['cropName'] ?? 'Unknown Crop'}', // Added (kg)
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                             trailing: const Icon(Icons.arrow_forward),
                           ),

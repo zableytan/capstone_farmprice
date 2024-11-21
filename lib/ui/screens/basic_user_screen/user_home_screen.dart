@@ -35,31 +35,41 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     'Markets',
   ];
 
+  // New list of descriptive subtitles
+  final List<String> cardDescriptions = [
+    'Real-time crop pricing across regions',
+    'Track crop performance over time',
+    'Analyze agricultural market dynamics',
+    'Comprehensive crop yield and quality insights',
+    'Detailed price fluctuation analysis',
+    'Explore agricultural market locations',
+  ];
+
   // Updated gradient colors using green palette
   final List<List<Color>> cardGradients = [
     [
-      Color.fromARGB(255, 123, 159, 76),
-      Color.fromARGB(255, 143, 179, 96),
+      const Color.fromARGB(255, 123, 159, 76),
+      const Color.fromARGB(255, 143, 179, 96),
     ],
     [
-      Color.fromARGB(255, 113, 149, 66),
-      Color.fromARGB(255, 133, 169, 86),
+      const Color.fromARGB(255, 113, 149, 66),
+      const Color.fromARGB(255, 133, 169, 86),
     ],
     [
-      Color.fromARGB(255, 103, 139, 56),
-      Color.fromARGB(255, 123, 159, 76),
+      const Color.fromARGB(255, 103, 139, 56),
+      const Color.fromARGB(255, 123, 159, 76),
     ],
     [
-      Color.fromARGB(255, 93, 129, 46),
-      Color.fromARGB(255, 113, 149, 66),
+      const Color.fromARGB(255, 93, 129, 46),
+      const Color.fromARGB(255, 113, 149, 66),
     ],
     [
-      Color.fromARGB(255, 83, 119, 36),
-      Color.fromARGB(255, 103, 139, 56),
+      const Color.fromARGB(255, 83, 119, 36),
+      const Color.fromARGB(255, 103, 139, 56),
     ],
     [
-      Color.fromARGB(255, 73, 109, 26),
-      Color.fromARGB(255, 93, 129, 46),
+      const Color.fromARGB(255, 73, 109, 26),
+      const Color.fromARGB(255, 93, 129, 46),
     ],
   ];
 
@@ -93,7 +103,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
         title: const Text(
           'Home',
           style: TextStyle(
-            color: Color.fromARGB(255, 123, 159, 76),
+            color: Color.fromARGB(255, 0, 0, 0),
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -159,7 +169,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Tap to explore',
+                                    cardDescriptions[index],
                                     style: TextStyle(
                                       color: Colors.white.withOpacity(0.9),
                                       fontSize: 16,
