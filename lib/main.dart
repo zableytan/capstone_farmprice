@@ -4,7 +4,6 @@ import 'package:myapp/color_theme.dart';
 import 'package:myapp/ui/screens/landing_screen.dart';
 import 'firebase_options.dart';
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -22,13 +21,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: customThemePrimary,
-        textSelectionTheme: const TextSelectionThemeData(
+          primarySwatch: customThemePrimary,
+          textSelectionTheme: const TextSelectionThemeData(
             cursorColor: Color(0xFF279778),
             selectionColor: Color(0xFF279778),
             selectionHandleColor: Color(0xFF279778),
-          )
-      ),
+          )),
       home: const LandingScreen(),
     );
   }

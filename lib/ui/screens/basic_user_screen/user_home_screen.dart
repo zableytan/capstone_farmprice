@@ -18,24 +18,59 @@ class UserHomeScreen extends StatefulWidget {
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
   final List<String> cardImages = [
-    "lib/ui/assets/card_one_icon.png",
-    "lib/ui/assets/card_two_icon.png",
-    "lib/ui/assets/card_three_icon.png",
-    "lib/ui/assets/card_four_icon.png",
-    "lib/ui/assets/card_five_icon.png",
-    "lib/ui/assets/card_six_icon.png",
+    "lib/ui/assets/card_one_icon.png", // Current Prices
+    "lib/ui/assets/card_five_icon.png", // Price Changes
+    "lib/ui/assets/card_three_icon.png", // Market Trends
+    "lib/ui/assets/card_two_icon.png", // Historical Data
+    "lib/ui/assets/card_four_icon.png", // Crop Reports
+    "lib/ui/assets/card_six_icon.png", // Markets
   ];
 
   final List<String> cardTexts = [
     'Current Prices',
-    'Historical Data',
-    'Market Trends',
-    'Crops Report',
     'Price Changes',
+    'Market Trends',
+    'Historical Data',
+    'Crops Report',
     'Markets',
   ];
 
-  // Firestore instance to fetch crop data
+  final List<String> cardDescriptions = [
+    'Real-time crop pricing',
+    'Detailed price fluctuation analysis',
+    'Seasonal and Trending Crop Rankings',
+    'Track crop performance over time',
+    'Latest News and Updates on Crops',
+    'Explore agricultural market locations',
+  ];
+
+  final List<List<Color>> cardGradients = [
+    [
+      const Color.fromARGB(255, 123, 159, 76),
+      const Color.fromARGB(255, 143, 179, 96),
+    ],
+    [
+      const Color.fromARGB(255, 83, 119, 36),
+      const Color.fromARGB(255, 103, 139, 56),
+    ],
+    [
+      const Color.fromARGB(255, 103, 139, 56),
+      const Color.fromARGB(255, 123, 159, 76),
+    ],
+    [
+      const Color.fromARGB(255, 113, 149, 66),
+      const Color.fromARGB(255, 133, 169, 86),
+    ],
+    [
+      const Color.fromARGB(255, 93, 129, 46),
+      const Color.fromARGB(255, 113, 149, 66),
+    ],
+    [
+      const Color.fromARGB(255, 73, 109, 26),
+      const Color.fromARGB(255, 93, 129, 46),
+    ],
+  ];
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<List<String>> _getCropIds() async {
@@ -44,13 +79,13 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           .collection('admin_accounts')
           .doc('crops_available')
           .collection('crops')
-          .get(); // Correct path to fetch crops
+          .get();
       print(
           "Fetched documents: ${snapshot.docs.map((doc) => doc.id).toList()}");
 
       List<String> cropIds = [];
       for (var doc in snapshot.docs) {
-        cropIds.add(doc.id); // Assuming the document ID is the crop ID
+        cropIds.add(doc.id);
       }
       return cropIds;
     } catch (e) {
@@ -62,11 +97,21 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
+        title: const Text(
+          'Home',
+          style: TextStyle(
+            color: Color.fromARGB(255, 0, 0, 0),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: FutureBuilder<List<String>>(
-        future: _getCropIds(), // Fetch crop IDs asynchronously
+        future: _getCropIds(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CustomLoadingIndicator());
@@ -75,69 +120,80 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text("No crops available"));
           } else {
-            List<String> cropIds = snapshot.data!; // The list of crop IDs
-            return Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Image.asset(
-                    "lib/ui/assets/farm_price_icon_no_spaces.png",
-                    width: 200,
-                    height: 100,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: _getCrossAxisCount(context),
-                        crossAxisSpacing: 10.0,
-                        mainAxisSpacing: 10.0,
-                        childAspectRatio: 0.9,
-                      ),
-                      itemCount: 6,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            _navigateToUniqueScreen(context, index, cropIds);
-                          },
-                          child: Card(
-                            color: const Color.fromARGB(255, 123, 159, 76),
-                            elevation: 5.0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  cardImages[index],
-                                  width: 50,
-                                  height: 50,
-                                  fit: BoxFit.cover,
-                                ),
-                                const SizedBox(height: 20),
-                                Text(
-                                  cardTexts[index],
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
+            List<String> cropIds = snapshot.data!;
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ListView.builder(
+                itemCount: 6,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        _navigateToUniqueScreen(context, index, cropIds);
                       },
+                      child: Container(
+                        height: 140,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: cardGradients[index],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              spreadRadius: 0,
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              left: 20,
+                              top: 20,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    cardTexts[index],
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    cardDescriptions[index],
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.9),
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Positioned(
+                              right: 20,
+                              bottom: 20,
+                              child: Image.asset(
+                                cardImages[index],
+                                width: 40,
+                                height: 40,
+                                color: Colors.white.withOpacity(0.9),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-              ],
+                  );
+                },
+              ),
             );
           }
         },
@@ -145,60 +201,33 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     );
   }
 
-  // Helper method to navigate to a unique screen based on the card index
   void _navigateToUniqueScreen(
       BuildContext context, int index, List<String> cropIds) {
     switch (index) {
       case 0:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const CurrentPrices()),
-        );
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const CurrentPrices()));
         break;
       case 1:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const CropListScreen(),
-          ),
-        );
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const PriceChanges()));
         break;
       case 2:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const MarketTrends()),
-        );
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const MarketTrends()));
         break;
       case 3:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const UserCropReport()),
-        );
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const CropListScreen()));
         break;
       case 4:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const PriceChanges()),
-        );
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const UserCropReport()));
         break;
       case 5:
         Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const Markets()),
-        );
+            context, MaterialPageRoute(builder: (context) => const Markets()));
         break;
-    }
-  }
-
-  // Helper method to determine the number of columns based on screen width
-  int _getCrossAxisCount(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    if (width < 600) {
-      return 2; // 2 columns for small screens (e.g., phones)
-    } else if (width < 1200) {
-      return 3; // 3 columns for medium screens (e.g., tablets)
-    } else {
-      return 4; // 4 columns for large screens (e.g., tablets in landscape or small desktops)
     }
   }
 }
