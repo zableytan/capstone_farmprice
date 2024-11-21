@@ -596,14 +596,18 @@ class FirebaseService {
     }
   }
 
-  // ****************** TRENT MARKET SERVICES ****************** //
+  // ****************** TREND MARKET SERVICES ****************** //
+
 
   // CREATE: CROP
   static Future<void> createTrendCrop({
     required BuildContext context,
     required String cropName,
     required double retailPrice,
+    required double wholeSalePrice, // Added wholesale price parameter
+    required double landingPrice, // Added landing price parameter
     required PlatformFile? cropImage,
+    required int ranking, // Added ranking parameter
   }) async {
     try {
       // DISPLAY LOADING DIALOG
@@ -611,23 +615,26 @@ class FirebaseService {
       final userCredential = FirebaseAuth.instance.currentUser;
       if (userCredential == null) throw Exception("User not signed in");
 
-      // Upload the market image
+      // Upload the crop image
       final String? cropImageURL = await AdminServices.uploadFile(cropImage);
 
-      // Generate a unique market ID
+      // Generate a unique crop ID
       String cropID =
           FirebaseFirestore.instance.collection('admin_accounts').doc().id;
 
-      // Prepare the market data
+      // Prepare the crop data
       final cropsData = {
         'cropName': cropName,
         'cropID': cropID,
         'retailPrice': retailPrice,
+        'wholeSalePrice': wholeSalePrice, // Save the wholesale price
+        'landingPrice': landingPrice, // Save the landing price
         'previousRetailPrice': retailPrice,
         'cropImage': cropImageURL,
+        'ranking': ranking, // Save the ranking
       };
 
-      // Save the market data to Firestore
+      // Save the crop data to Firestore
       await FirebaseFirestore.instance
           .collection('admin_accounts')
           .doc('trend_market')
@@ -638,7 +645,7 @@ class FirebaseService {
       // IF CREATING SERVICE SUCCESSFUL
       if (context.mounted) {
         // Dismiss loading dialog
-        if (context.mounted) Navigator.of(context).pop();
+        Navigator.of(context).pop();
         showFloatingSnackBar(
           context,
           'Crop added successfully.',
@@ -655,10 +662,12 @@ class FirebaseService {
           const Color(0xFFe91b4f),
         );
         // Dismiss loading dialog
-        if (context.mounted) Navigator.of(context).pop();
+        Navigator.of(context).pop();
       }
     }
   }
+
+
 
   // READ: CROP INFO
   static Future<Map<String, dynamic>> getTrendCrop(String cropID) async {
@@ -684,6 +693,9 @@ class FirebaseService {
     required String cropID,
     required String cropName,
     required double retailPrice,
+    required double wholeSalePrice, // Added wholesale price parameter
+    required double landingPrice, // Added landing price parameter
+    required int ranking, // Added ranking parameter
     PlatformFile? cropImage,
     String? oldImageURL,
   }) async {
@@ -704,7 +716,7 @@ class FirebaseService {
         throw Exception("Image upload failed, no image available to update.");
       }
 
-      // Update the market data
+      // Update the crop data
       await FirebaseFirestore.instance
           .collection('admin_accounts')
           .doc('trend_market')
@@ -713,7 +725,10 @@ class FirebaseService {
           .update({
         'cropName': cropName,
         'retailPrice': retailPrice,
+        'wholeSalePrice': wholeSalePrice, // Update the wholesale price
+        'landingPrice': landingPrice, // Update the landing price
         'cropImage': cropImage ?? oldImageURL,
+        'ranking': ranking, // Update the ranking
       });
 
       // IF ADDING SERVICE SUCCESSFUL
@@ -740,6 +755,8 @@ class FirebaseService {
       }
     }
   }
+
+
 
   // DELETE: CROP
   static Future<void> deleteTrendCrop(

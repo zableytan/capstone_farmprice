@@ -24,10 +24,16 @@ class _UpdateMarketTrendState extends State<UpdateMarketTrend> {
   // CONTROLLERS
   final TextEditingController _cropNameController = TextEditingController();
   final TextEditingController _retailPriceController = TextEditingController();
+  final TextEditingController _rankingController = TextEditingController();  // Added Ranking Controller
+  final TextEditingController _wholesalePriceController = TextEditingController(); // Wholesale price controller
+  final TextEditingController _landingPriceController = TextEditingController(); // Landing price controller
 
   // FOCUS NODES
   final FocusNode _cropNameFocusNode = FocusNode();
   final FocusNode _retailPriceFocusNode = FocusNode();
+  final FocusNode _wholesalePriceFocusNode = FocusNode(); // Focus node for wholesale price
+  final FocusNode _landingPriceFocusNode = FocusNode();
+  final FocusNode _rankingFocusNode = FocusNode();  // Added Ranking Focus Node
 
   // VARIABLE DECLARATION
   PlatformFile? cropImage;
@@ -47,8 +53,14 @@ class _UpdateMarketTrendState extends State<UpdateMarketTrend> {
   void dispose() {
     _cropNameController.dispose();
     _retailPriceController.dispose();
+    _wholesalePriceController.dispose();
+    _landingPriceController.dispose();
+    _rankingController.dispose();  // Dispose Ranking Controller
     _cropNameFocusNode.dispose();
     _retailPriceFocusNode.dispose();
+    _rankingFocusNode.dispose();  // Dispose Ranking Focus Node
+    _wholesalePriceFocusNode.dispose();
+    _landingPriceFocusNode.dispose();
     super.dispose();
   }
 
@@ -75,6 +87,9 @@ class _UpdateMarketTrendState extends State<UpdateMarketTrend> {
         setState(() {
           _cropNameController.text = data['cropName'];
           _retailPriceController.text = data['retailPrice'].toString();
+          _wholesalePriceController.text = data['wholeSalePrice'].toString();
+          _landingPriceController.text = data['landingPrice'].toString();
+          _rankingController.text = data['ranking'].toString();  // Fetch Ranking
           imageULR = data['cropImage'];
           oldImageURL = imageULR;
         });
@@ -83,19 +98,22 @@ class _UpdateMarketTrendState extends State<UpdateMarketTrend> {
       setState(() {
         isLoading = false;
       });
-      print('Error fetching user services: $e');
+      print('Error fetching crop data: $e');
     }
   }
 
-  // METHOD THAT WILL SAVED MARKET INFO
+  // METHOD THAT WILL SAVE MARKET INFO
   void handleUpdateCrop() async {
     await FirebaseService.updateTrendCrop(
       context: context,
       cropID: widget.cropID,
       cropName: _cropNameController.text,
       retailPrice: double.parse(_retailPriceController.text),
+      wholeSalePrice: double.parse(_wholesalePriceController.text),
+      landingPrice: double.parse(_landingPriceController.text),
       cropImage: cropImage,
       oldImageURL: oldImageURL,
+      ranking: int.parse(_rankingController.text),  // Pass the ranking
     );
   }
 
@@ -167,7 +185,7 @@ class _UpdateMarketTrendState extends State<UpdateMarketTrend> {
             CustomTextField(
               controller: _retailPriceController,
               currentFocusNode: _retailPriceFocusNode,
-              nextFocusNode: null,
+              nextFocusNode: _rankingFocusNode,
               keyBoardType: TextInputType.number,
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.digitsOnly,
@@ -185,9 +203,107 @@ class _UpdateMarketTrendState extends State<UpdateMarketTrend> {
               prefixIcon: null,
             ),
 
+            // CROP WHOLESALE PRICE
+            const Text(
+              "Wholesale Price",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF3C4D48),
+              ),
+            ),
+            const SizedBox(height: 2),
+            CustomTextField(
+              controller: _wholesalePriceController,
+              currentFocusNode: _wholesalePriceFocusNode,
+              nextFocusNode: _landingPriceFocusNode,
+              keyBoardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return "Wholesale price is required";
+                }
+                return null;
+              },
+              hintText: "00.00",
+              minLines: 1,
+              maxLines: 1,
+              isPassword: false,
+              prefixIcon: null,
+            ),
+
+            const SizedBox(height: 10),
+
+            // CROP LANDING PRICE
+            const Text(
+              "Landing Price",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF3C4D48),
+              ),
+            ),
+            const SizedBox(height: 2),
+            CustomTextField(
+              controller: _landingPriceController,
+              currentFocusNode: _landingPriceFocusNode,
+              nextFocusNode: _rankingFocusNode,
+              keyBoardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return "Landing price is required";
+                }
+                return null;
+              },
+              hintText: "00.00",
+              minLines: 1,
+              maxLines: 1,
+              isPassword: false,
+              prefixIcon: null,
+            ),
+
+            // CROP RANKING
+            const SizedBox(height: 10),
+
+            const Text(
+              "Ranking",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF3C4D48),
+              ),
+            ),
+            const SizedBox(height: 2),
+            CustomTextField(
+              controller: _rankingController,
+              currentFocusNode: _rankingFocusNode,
+              nextFocusNode: null,
+              keyBoardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return "Ranking is required";
+                }
+                return null;
+              },
+              hintText: "Ranking",
+              minLines: 1,
+              maxLines: 1,
+              isPassword: false,
+              prefixIcon: null,
+            ),
+
             // SPACING
             const SizedBox(height: 10),
 
+            // CROP IMAGE BUTTON
             const Text(
               "Crop Image",
               style: TextStyle(
@@ -225,7 +341,6 @@ class _UpdateMarketTrendState extends State<UpdateMarketTrend> {
                     child: cropImage != null
                         ? Image.file(
                       File(cropImage!.path!),
-                      // Use the path of the selected image
                       width: double.infinity,
                       height: 130,
                       fit: BoxFit.cover,
@@ -253,42 +368,26 @@ class _UpdateMarketTrendState extends State<UpdateMarketTrend> {
                           imageULR = null;
                         });
                       },
-                      child: Container(
-                        margin: const EdgeInsets.all(5),
-                        child: const Icon(
-                          Icons.clear_rounded,
-                          color: Color(0xFFF5F5F5),
-                          size: 15,
-                        ),
+                      child: const Icon(
+                        Icons.cancel_outlined,
+                        color: Color(0xFFFF4D4D),
                       ),
                     ),
+                    top: 8,
+                    right: 8,
                   ),
                 ],
               )
-                  : const Center(
-                child: Column(
-                  children: <Widget>[
-                    Icon(
-                      Icons.add_a_photo_rounded,
-                      color: Colors.grey,
-                    ),
-                    Text(
-                      "Crop Image",
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
+                  : const Icon(
+                Icons.add_a_photo_outlined,
+                size: 40,
+                color: Color(0xFFBDBDC7),
               ),
             ),
 
-            // SPACING
-            const SizedBox(height: 15),
+            const SizedBox(height: 30),
 
-            // BUTTON: SAVE PHONE NUMBER
+            // UPDATE BUTTON
             CustomButton(
               onPressed: handleUpdateCrop,
               buttonHeight: 50,
@@ -300,7 +399,6 @@ class _UpdateMarketTrendState extends State<UpdateMarketTrend> {
               buttonLabel: "Publish",
             ),
 
-            // SPACING
             const SizedBox(height: 20),
           ],
         ),

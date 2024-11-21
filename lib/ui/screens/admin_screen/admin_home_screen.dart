@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:myapp/services/report_service.dart';
 import 'package:myapp/ui/screens/admin_screen/crop_reports/crop_reports_screen.dart';
 import 'package:myapp/ui/screens/admin_screen/crops/crops_screen.dart';
 import 'package:myapp/ui/screens/admin_screen/market_trends/market_trends_screen.dart';
@@ -7,6 +8,7 @@ import 'package:myapp/ui/screens/admin_screen/markets/markets_screen.dart';
 import 'package:myapp/ui/widgets/custom_icon.dart';
 import 'package:myapp/ui/widgets/modals/custom_modals.dart';
 import 'package:myapp/ui/widgets/navigation/custom_navigation.dart';
+import 'package:myapp/services/crop_services.dart'; // Import the service for generateCropsReport
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
@@ -133,6 +135,20 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 },
                 'lib/ui/assets/market_trends_icon.png',
                 "Market Trends",
+                17,
+                FontWeight.normal,
+                Colors.white,
+                const Color(0xFF133c0b),
+                8,
+              ),
+
+              // GENERATE EXCEL FILE
+              _buildButtonContainers(
+                    () {
+                  generateCropsReport(context); // Call generateCropsReport
+                },
+                'lib/ui/assets/excel_icon.png',
+                "Generate Excel Report",
                 17,
                 FontWeight.normal,
                 Colors.white,

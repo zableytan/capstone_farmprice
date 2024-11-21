@@ -19,10 +19,16 @@ class _AddMarketTrendState extends State<AddMarketTrend> {
   // CONTROLLERS
   final TextEditingController _cropNameController = TextEditingController();
   final TextEditingController _retailPriceController = TextEditingController();
+  final TextEditingController _wholesalePriceController = TextEditingController(); // Wholesale price controller
+  final TextEditingController _landingPriceController = TextEditingController(); // Landing price controller
+  final TextEditingController _rankingController = TextEditingController(); // Ranking controller
 
   // FOCUS NODES
   final FocusNode _cropNameFocusNode = FocusNode();
   final FocusNode _retailPriceFocusNode = FocusNode();
+  final FocusNode _wholesalePriceFocusNode = FocusNode(); // Focus node for wholesale price
+  final FocusNode _landingPriceFocusNode = FocusNode(); // Focus node for landing price
+  final FocusNode _rankingFocusNode = FocusNode(); // Focus node for ranking
 
   // VARIABLE DECLARATION
   PlatformFile? cropImage;
@@ -32,8 +38,14 @@ class _AddMarketTrendState extends State<AddMarketTrend> {
   void dispose() {
     _cropNameController.dispose();
     _retailPriceController.dispose();
+    _wholesalePriceController.dispose();
+    _landingPriceController.dispose();
+    _rankingController.dispose();
     _cropNameFocusNode.dispose();
     _retailPriceFocusNode.dispose();
+    _wholesalePriceFocusNode.dispose();
+    _landingPriceFocusNode.dispose();
+    _rankingFocusNode.dispose();
     super.dispose();
   }
 
@@ -47,9 +59,14 @@ class _AddMarketTrendState extends State<AddMarketTrend> {
     }
   }
 
-  // METHOD THAT WILL CROP INFO
+  // METHOD THAT WILL CREATE CROP INFO
   void handleCreateCrop() async {
-    if (_cropNameController.text.isEmpty || cropImage == null) {
+    if (_cropNameController.text.isEmpty ||
+        cropImage == null ||
+        _rankingController.text.isEmpty ||
+        _retailPriceController.text.isEmpty ||
+        _wholesalePriceController.text.isEmpty ||
+        _landingPriceController.text.isEmpty) {
       print("Please provide all required fields");
       return;
     }
@@ -58,7 +75,10 @@ class _AddMarketTrendState extends State<AddMarketTrend> {
       context: context,
       cropName: _cropNameController.text,
       retailPrice: double.parse(_retailPriceController.text),
+      wholeSalePrice: double.parse(_wholesalePriceController.text), // Pass wholesale price
+      landingPrice: double.parse(_landingPriceController.text), // Pass landing price
       cropImage: cropImage,
+      ranking: int.parse(_rankingController.text), // Pass ranking
     );
   }
 
@@ -130,7 +150,7 @@ class _AddMarketTrendState extends State<AddMarketTrend> {
             CustomTextField(
               controller: _retailPriceController,
               currentFocusNode: _retailPriceFocusNode,
-              nextFocusNode: null,
+              nextFocusNode: _wholesalePriceFocusNode,
               keyBoardType: TextInputType.number,
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.digitsOnly,
@@ -148,7 +168,107 @@ class _AddMarketTrendState extends State<AddMarketTrend> {
               prefixIcon: null,
             ),
 
-            // SPACING
+            const SizedBox(height: 10),
+
+            // CROP WHOLESALE PRICE
+            const Text(
+              "Wholesale Price",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF3C4D48),
+              ),
+            ),
+            const SizedBox(height: 2),
+            CustomTextField(
+              controller: _wholesalePriceController,
+              currentFocusNode: _wholesalePriceFocusNode,
+              nextFocusNode: _landingPriceFocusNode,
+              keyBoardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return "Wholesale price is required";
+                }
+                return null;
+              },
+              hintText: "00.00",
+              minLines: 1,
+              maxLines: 1,
+              isPassword: false,
+              prefixIcon: null,
+            ),
+
+            const SizedBox(height: 10),
+
+            // CROP LANDING PRICE
+            const Text(
+              "Landing Price",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF3C4D48),
+              ),
+            ),
+            const SizedBox(height: 2),
+            CustomTextField(
+              controller: _landingPriceController,
+              currentFocusNode: _landingPriceFocusNode,
+              nextFocusNode: _rankingFocusNode,
+              keyBoardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return "Landing price is required";
+                }
+                return null;
+              },
+              hintText: "00.00",
+              minLines: 1,
+              maxLines: 1,
+              isPassword: false,
+              prefixIcon: null,
+            ),
+
+            const SizedBox(height: 10),
+
+            // CROP RANKING
+            const Text(
+              "Crop Ranking",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF3C4D48),
+              ),
+            ),
+            const SizedBox(height: 2),
+            CustomTextField(
+              controller: _rankingController,
+              currentFocusNode: _rankingFocusNode,
+              nextFocusNode: null,
+              keyBoardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return "Ranking is required";
+                } else if (int.tryParse(value) == null || int.parse(value) < 1 || int.parse(value) > 10) {
+                  return "Ranking must be between 1 and 10";
+                }
+                return null;
+              },
+              hintText: "1",
+              minLines: 1,
+              maxLines: 1,
+              isPassword: false,
+              prefixIcon: null,
+            ),
+
             const SizedBox(height: 10),
 
             const Text(
@@ -231,10 +351,9 @@ class _AddMarketTrendState extends State<AddMarketTrend> {
               ),
             ),
 
-            // SPACING
             const SizedBox(height: 15),
 
-            // BUTTON: SAVE PHONE NUMBER
+            // ADD BUTTON
             CustomButton(
               onPressed: handleCreateCrop,
               buttonHeight: 50,
@@ -245,9 +364,6 @@ class _AddMarketTrendState extends State<AddMarketTrend> {
               borderRadius: 10,
               buttonLabel: "List Trend Crop",
             ),
-
-            // SPACING
-            const SizedBox(height: 20),
           ],
         ),
       ),

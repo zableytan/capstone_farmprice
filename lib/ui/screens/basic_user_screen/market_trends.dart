@@ -33,6 +33,7 @@ class _MarketTrendsState extends State<MarketTrends> {
             .collection('admin_accounts')
             .doc('trend_market')
             .collection('trend_crops')
+            .orderBy('ranking')  // Sort by 'ranking' field
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -48,7 +49,7 @@ class _MarketTrendsState extends State<MarketTrends> {
           if (snapshot.data?.docs.isEmpty ?? true) {
             // DISPLAY THERE IS NO AVAILABLE DATA
             return const NoMarketAvailable(
-              screenName: 'trent market',
+              screenName: 'trend market',
             );
           } else {
             // DISPLAY AVAILABLE SERVICES: AS GRIDVIEW

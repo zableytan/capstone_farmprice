@@ -15,6 +15,7 @@ class UserMarketTrendsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var imageURL = cropInfo['cropImage'] as String?;
+    var ranking = cropInfo['ranking'] ?? 0; // Get ranking from crop info
 
     return GestureDetector(
       onTap: () {
@@ -51,17 +52,35 @@ class UserMarketTrendsCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Row(
-            crossAxisAlignment:
-            CrossAxisAlignment.center, // Align children vertically
+            crossAxisAlignment: CrossAxisAlignment.center, // Align children vertically
             children: <Widget>[
-              const SizedBox(width: 20),
-              // Second Column: Circular Image
+              // Ranking on the left side
+              Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF3C4D48), // Dark background for ranking
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: AutoSizeText(
+                  '$ranking', // Display the ranking
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                  maxLines: 1,
+                  minFontSize: 12,
+                ),
+              ),
+              const SizedBox(width: 20), // Space between ranking and image
+
+              // Crop Image
               SizedBox(
                 width: 60,
                 height: 60,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(
-                      8), // Adjust this value for rounding
+                  borderRadius: BorderRadius.circular(8), // Adjust this value for rounding
                   child: imageURL != null && imageURL.isNotEmpty
                       ? FadeInImage(
                     width: 50,
@@ -88,9 +107,9 @@ class UserMarketTrendsCard extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(width: 50),
+              const SizedBox(width: 20), // Space between image and crop name
 
-              // Third Column: Crop Name
+              // Crop Name
               Expanded(
                 child: AutoSizeText(
                   cropInfo['cropName'] ?? 'N/A',
@@ -105,13 +124,13 @@ class UserMarketTrendsCard extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(width: 50),
+              const SizedBox(width: 20), // Space between crop name and price
 
-              // Third Column: Crop Name
+              // Crop Price
               Expanded(
                 child: AutoSizeText(
-                    "₱ ${double.tryParse(cropInfo['retailPrice'].toString())?.toStringAsFixed(2) ?? '0.00'}",
-                    style: const TextStyle(
+                  "₱ ${double.tryParse(cropInfo['retailPrice'].toString())?.toStringAsFixed(2) ?? '0.00'}",
+                  style: const TextStyle(
                     color: Color(0xFF222227),
                     fontWeight: FontWeight.w500,
                     fontSize: 15,
