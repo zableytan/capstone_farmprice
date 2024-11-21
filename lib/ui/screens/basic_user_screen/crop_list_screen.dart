@@ -48,6 +48,7 @@ class _CropListScreenState extends State<CropListScreen> {
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
+<<<<<<< HEAD
                         icon: const Icon(Icons.clear),
                         onPressed: () {
                           setState(() {
@@ -56,6 +57,16 @@ class _CropListScreenState extends State<CropListScreen> {
                           });
                         },
                       )
+=======
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    setState(() {
+                      _searchController.clear();
+                      _searchQuery = '';
+                    });
+                  },
+                )
+>>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
                     : null,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -63,8 +74,12 @@ class _CropListScreenState extends State<CropListScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
+<<<<<<< HEAD
                   borderSide:
                       const BorderSide(color: Color(0xFF133c0b), width: 2),
+=======
+                  borderSide: const BorderSide(color: Color(0xFF133c0b), width: 2),
+>>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
                 ),
                 filled: true,
                 fillColor: Colors.white,
@@ -126,8 +141,12 @@ class _CropListScreenState extends State<CropListScreen> {
 
                   return GridView.builder(
                     padding: const EdgeInsets.all(10),
+<<<<<<< HEAD
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
+=======
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+>>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
                       crossAxisCount: 1,
                       crossAxisSpacing: 5,
                       mainAxisSpacing: 5,
@@ -142,6 +161,7 @@ class _CropListScreenState extends State<CropListScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => HistoricalDataScreen(
+<<<<<<< HEAD
                                 cropIds:
                                     sortedCrops.map((crop) => crop.id).toList(),
                                 initialIndex: index,
@@ -174,6 +194,39 @@ class _CropListScreenState extends State<CropListScreen> {
                                       fit: BoxFit.cover,
                                     ),
                                   ),
+=======
+                                cropIds: sortedCrops.map((crop) => crop.id).toList(),
+                                initialIndex: index,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Card(
+                          color: Colors.white,
+                          elevation: 2,
+                          margin: const EdgeInsets.all(8),
+                          child: ListTile(
+                            leading: cropInfo['cropImage'] != null &&
+                                cropInfo['cropImage'].isNotEmpty
+                                ? ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                cropInfo['cropImage'],
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                                : ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.asset(
+                                'lib/ui/assets/no_image.jpeg',
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+>>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
                             title: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [

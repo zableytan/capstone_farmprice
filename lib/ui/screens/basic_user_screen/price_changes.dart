@@ -91,8 +91,12 @@ class _PriceChangesState extends State<PriceChanges> {
 
                   return GridView.builder(
                     padding: const EdgeInsets.all(10),
+<<<<<<< HEAD
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
+=======
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+>>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
                       crossAxisCount: 1, // NUMBER OF COLUMNS
                       crossAxisSpacing: 5, // HORIZONTAL SPACE BETWEEN CARDS
                       mainAxisSpacing: 5, // VERTICAL SPACE BETWEEN CARDS

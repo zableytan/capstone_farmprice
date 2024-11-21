@@ -35,6 +35,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     'Markets',
   ];
 
+<<<<<<< HEAD
   final List<String> cardDescriptions = [
     'Real-time crop pricing',
     'Detailed price fluctuation analysis',
@@ -44,28 +45,56 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     'Explore agricultural market locations',
   ];
 
+=======
+  // New list of descriptive subtitles
+  final List<String> cardDescriptions = [
+    'Real-time crop pricing across regions',
+    'Track crop performance over time',
+    'Analyze agricultural market dynamics',
+    'Comprehensive crop yield and quality insights',
+    'Detailed price fluctuation analysis',
+    'Explore agricultural market locations',
+  ];
+
+  // Updated gradient colors using green palette
+>>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
   final List<List<Color>> cardGradients = [
     [
       const Color.fromARGB(255, 123, 159, 76),
       const Color.fromARGB(255, 143, 179, 96),
     ],
     [
+<<<<<<< HEAD
       const Color.fromARGB(255, 83, 119, 36),
       const Color.fromARGB(255, 103, 139, 56),
+=======
+      const Color.fromARGB(255, 113, 149, 66),
+      const Color.fromARGB(255, 133, 169, 86),
+>>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
     ],
     [
       const Color.fromARGB(255, 103, 139, 56),
       const Color.fromARGB(255, 123, 159, 76),
     ],
     [
+<<<<<<< HEAD
       const Color.fromARGB(255, 113, 149, 66),
       const Color.fromARGB(255, 133, 169, 86),
     ],
     [
+=======
+>>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
       const Color.fromARGB(255, 93, 129, 46),
       const Color.fromARGB(255, 113, 149, 66),
     ],
     [
+<<<<<<< HEAD
+=======
+      const Color.fromARGB(255, 83, 119, 36),
+      const Color.fromARGB(255, 103, 139, 56),
+    ],
+    [
+>>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
       const Color.fromARGB(255, 73, 109, 26),
       const Color.fromARGB(255, 93, 129, 46),
     ],
@@ -80,8 +109,12 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           .doc('crops_available')
           .collection('crops')
           .get();
+<<<<<<< HEAD
       print(
           "Fetched documents: ${snapshot.docs.map((doc) => doc.id).toList()}");
+=======
+      print("Fetched documents: ${snapshot.docs.map((doc) => doc.id).toList()}");
+>>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
 
       List<String> cropIds = [];
       for (var doc in snapshot.docs) {
@@ -97,7 +130,11 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+<<<<<<< HEAD
       backgroundColor: Colors.grey[100],
+=======
+      backgroundColor: Colors.grey[100], // Light background to make cards pop
+>>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
       appBar: AppBar(
         title: const Text(
           'Home',
@@ -201,6 +238,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     );
   }
 
+<<<<<<< HEAD
   void _navigateToUniqueScreen(
       BuildContext context, int index, List<String> cropIds) {
     switch (index) {
@@ -231,3 +269,28 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     }
   }
 }
+=======
+  void _navigateToUniqueScreen(BuildContext context, int index, List<String> cropIds) {
+    switch (index) {
+      case 0:
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const CurrentPrices()));
+        break;
+      case 1:
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const CropListScreen()));
+        break;
+      case 2:
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const MarketTrends()));
+        break;
+      case 3:
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const UserCropReport()));
+        break;
+      case 4:
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const PriceChanges()));
+        break;
+      case 5:
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const Markets()));
+        break;
+    }
+  }
+}
+>>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9

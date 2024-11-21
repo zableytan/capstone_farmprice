@@ -62,9 +62,15 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
       setState(() {
         allCrops = cropsSnapshot.docs
             .map((doc) => {
+<<<<<<< HEAD
                   'id': doc.id,
                   'cropName': doc.data()['cropName'] ?? 'Unknown Crop',
                 })
+=======
+          'id': doc.id,
+          'cropName': doc.data()['cropName'] ?? 'Unknown Crop',
+        })
+>>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
             .toList();
       });
     } catch (e) {
@@ -82,11 +88,19 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
         isSearching = true;
         filteredCropIds = allCrops
             .where((crop) =>
+<<<<<<< HEAD
                 crop['cropName']
                     .toString()
                     .toLowerCase()
                     .contains(query.toLowerCase()) &&
                 widget.cropIds.contains(crop['id']))
+=======
+        crop['cropName']
+            .toString()
+            .toLowerCase()
+            .contains(query.toLowerCase()) &&
+            widget.cropIds.contains(crop['id']))
+>>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
             .map((crop) => crop['id'] as String)
             .toList();
       }
@@ -139,8 +153,13 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
 
       final now = DateTime.now();
       final past5Days = List.generate(5, (index) {
+<<<<<<< HEAD
         final date = DateFormat('MM/dd/yyyy')
             .format(now.subtract(Duration(days: index)));
+=======
+        final date =
+        DateFormat('MM/dd/yyyy').format(now.subtract(Duration(days: index)));
+>>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
         return data.firstWhere(
           (item) => item.date == date,
           orElse: () => _PriceData(date, 0),
@@ -181,7 +200,11 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
         child: CustomAppBar(
           backgroundColor: const Color(0xFF133c0b).withOpacity(0.3),
           titleText:
+<<<<<<< HEAD
               cropName.isNotEmpty ? "Data for $cropName" : "Historical Data",
+=======
+          cropName.isNotEmpty ? "Data for $cropName" : "Historical Data",
+>>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
           fontColor: const Color(0xFF3C4D48),
           onLeadingPressed: () => Navigator.pop(context),
         ),
@@ -202,8 +225,12 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
+<<<<<<< HEAD
                   borderSide:
                       const BorderSide(color: Color(0xFF133c0b), width: 2),
+=======
+                  borderSide: const BorderSide(color: Color(0xFF133c0b), width: 2),
+>>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
                 ),
               ),
               onChanged: _handleSearch,
@@ -225,6 +252,7 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
               child: isLoading
                   ? const Center(child: CustomLoadingIndicator())
                   : errorMessage.isNotEmpty
+<<<<<<< HEAD
                       ? Center(child: Text(errorMessage))
                       : Column(
                           children: [
@@ -315,6 +343,98 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
                             const SizedBox(height: 10),
                           ],
                         ),
+=======
+                  ? Center(child: Text(errorMessage))
+                  : Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(35),
+                    child: cropImage.isNotEmpty
+                        ? ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        cropImage,
+                        height: 120,
+                        width: double.infinity,
+                        fit: BoxFit.fitWidth,
+                      ),
+                    )
+                        : Image.asset(
+                      "lib/ui/assets/no_image.jpeg",
+                      height: 150,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Text(
+                    cropName,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: SfCartesianChart(
+                      primaryXAxis: const CategoryAxis(
+                          title: AxisTitle(text: 'Date')),
+                      primaryYAxis: NumericAxis(
+                        title: const AxisTitle(text: 'Price'),
+                        labelFormat: '₱{value}',
+                      ),
+                      tooltipBehavior: _tooltip,
+                      series: [
+                        ColumnSeries<_PriceData, String>(
+                          dataSource: priceData,
+                          xValueMapper: (data, _) => data.date,
+                          yValueMapper: (data, _) => data.price,
+                          dataLabelSettings:
+                          const DataLabelSettings(isVisible: true),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed:
+                          currentIndex > 0 ? _previousCrop : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF133c0b),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text(
+                            'Previous',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: currentIndex <
+                              filteredCropIds.length - 1
+                              ? _nextCrop
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF133c0b),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text(
+                            'Next',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
+>>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
             ),
         ],
       ),

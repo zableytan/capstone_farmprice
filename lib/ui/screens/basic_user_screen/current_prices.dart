@@ -70,6 +70,7 @@ class _CurrentPricesState extends State<CurrentPrices> {
                   ),
                   suffixIcon: _searchQuery.isNotEmpty
                       ? IconButton(
+<<<<<<< HEAD
                           icon: const Icon(Icons.clear),
                           onPressed: () {
                             setState(() {
@@ -78,6 +79,16 @@ class _CurrentPricesState extends State<CurrentPrices> {
                             });
                           },
                         )
+=======
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      setState(() {
+                        _searchController.clear();
+                        _searchQuery = '';
+                      });
+                    },
+                  )
+>>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
                       : null,
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(
@@ -118,8 +129,12 @@ class _CurrentPricesState extends State<CurrentPrices> {
                 // Filter based on search query
                 if (_searchQuery.isNotEmpty) {
                   sortedCrops = sortedCrops.where((crop) {
+<<<<<<< HEAD
                     final cropName =
                         (crop['cropName'] ?? '').toString().toLowerCase();
+=======
+                    final cropName = (crop['cropName'] ?? '').toString().toLowerCase();
+>>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
                     return cropName.contains(_searchQuery);
                   }).toList();
                 }
