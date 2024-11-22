@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myapp/ui/widgets/app_bar/custom_app_bar.dart';
 import 'package:myapp/ui/widgets/cards/user_cards/user_price_changes_card.dart';
 import 'package:myapp/ui/widgets/custom_loading_indicator_v2.dart';
@@ -17,6 +17,12 @@ class _PriceChangesState extends State<PriceChanges> {
   String _searchQuery = '';
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
@@ -26,9 +32,7 @@ class _PriceChangesState extends State<PriceChanges> {
           backgroundColor: const Color(0xFF133c0b).withOpacity(0.3),
           titleText: "Price Changes",
           fontColor: const Color(0xFF3C4D48),
-          onLeadingPressed: () {
-            Navigator.pop(context); // Safely pops to the previous screen
-          },
+          onLeadingPressed: () => Navigator.pop(context),
         ),
       ),
       body: Column(
@@ -69,59 +73,45 @@ class _PriceChangesState extends State<PriceChanges> {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 }
                 if (snapshot.data?.docs.isEmpty ?? true) {
-                  return const NoMarketAvailable(
-                    screenName: 'crops',
-                  );
-                } else {
-                  List<QueryDocumentSnapshot> sortedCrops = snapshot.data!.docs;
-
-                  // Filter and sort crops
-                  sortedCrops = sortedCrops
-                      .where((crop) => (crop['cropName'] ?? '')
-<<<<<<< HEAD
-                          .toString()
-                          .toLowerCase()
-                          .contains(_searchQuery))
-=======
-                      .toString()
-                      .toLowerCase()
-                      .contains(_searchQuery))
->>>>>>> 36015d6 (Update project with latest changes)
-                      .toList();
-
-                  sortedCrops.sort((a, b) {
-                    double aPrice = (a['retailPrice'] ?? 0).toDouble();
-                    double bPrice = (b['retailPrice'] ?? 0).toDouble();
-                    return bPrice.compareTo(aPrice); // Sort high to low
-                  });
-
-                  return GridView.builder(
-                    padding: const EdgeInsets.all(10),
-<<<<<<< HEAD
-<<<<<<< HEAD
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-=======
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
->>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
-=======
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
->>>>>>> 36015d6 (Update project with latest changes)
-                      crossAxisCount: 1, // NUMBER OF COLUMNS
-                      crossAxisSpacing: 5, // HORIZONTAL SPACE BETWEEN CARDS
-                      mainAxisSpacing: 5, // VERTICAL SPACE BETWEEN CARDS
-                      childAspectRatio: 4.5, // ASPECT RATIO OF EACH CARD
-                    ),
-                    itemCount: sortedCrops.length,
-                    itemBuilder: (context, index) {
-                      var cropInfo = sortedCrops[index];
-
-                      return UserPriceChangesCard(
-                        cropInfo: cropInfo,
-                      );
-                    },
-                  );
+                  return const NoMarketAvailable(screenName: 'crops');
                 }
+
+                // Filter and sort crops
+                List<QueryDocumentSnapshot> filteredCrops = snapshot.data!.docs
+                    .where((crop) =>
+                    (crop['cropName'] ?? '')
+                        .toString()
+                        .toLowerCase()
+                        .contains(_searchQuery))
+                    .toList();
+
+                filteredCrops.sort((a, b) {
+                  double aPrice = (a['retailPrice'] ?? 0).toDouble();
+                  double bPrice = (b['retailPrice'] ?? 0).toDouble();
+                  return bPrice.compareTo(aPrice); // Sort high to low
+                });
+
+                return filteredCrops.isEmpty
+                    ? const Center(
+                  child: Text(
+                    'No crops match your search.',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                )
+                    : GridView.builder(
+                  padding: const EdgeInsets.all(10),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 1,
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 5,
+                    childAspectRatio: 4.5,
+                  ),
+                  itemCount: filteredCrops.length,
+                  itemBuilder: (context, index) {
+                    var cropInfo = filteredCrops[index];
+                    return UserPriceChangesCard(cropInfo: cropInfo);
+                  },
+                );
               },
             ),
           ),

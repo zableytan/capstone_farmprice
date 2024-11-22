@@ -18,21 +18,12 @@ class UserHomeScreen extends StatefulWidget {
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
   final List<String> cardImages = [
-<<<<<<< HEAD
     "lib/ui/assets/card_one_icon.png", // Current Prices
     "lib/ui/assets/card_five_icon.png", // Price Changes
     "lib/ui/assets/card_three_icon.png", // Market Trends
     "lib/ui/assets/card_two_icon.png", // Historical Data
     "lib/ui/assets/card_four_icon.png", // Crop Reports
     "lib/ui/assets/card_six_icon.png", // Markets
-=======
-    "lib/ui/assets/card_one_icon.png",      // Current Prices
-    "lib/ui/assets/card_five_icon.png",     // Price Changes
-    "lib/ui/assets/card_three_icon.png",    // Market Trends
-    "lib/ui/assets/card_two_icon.png",      // Historical Data
-    "lib/ui/assets/card_four_icon.png",     // Crop Reports
-    "lib/ui/assets/card_six_icon.png",      // Markets
->>>>>>> 36015d6 (Update project with latest changes)
   ];
 
   final List<String> cardTexts = [
@@ -44,10 +35,6 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     'Markets',
   ];
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 36015d6 (Update project with latest changes)
   final List<String> cardDescriptions = [
     'Real-time crop pricing',
     'Detailed price fluctuation analysis',
@@ -57,73 +44,28 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     'Explore agricultural market locations',
   ];
 
-<<<<<<< HEAD
-=======
-  // New list of descriptive subtitles
-  final List<String> cardDescriptions = [
-    'Real-time crop pricing across regions',
-    'Track crop performance over time',
-    'Analyze agricultural market dynamics',
-    'Comprehensive crop yield and quality insights',
-    'Detailed price fluctuation analysis',
-    'Explore agricultural market locations',
-  ];
-
-  // Updated gradient colors using green palette
->>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
-=======
->>>>>>> 36015d6 (Update project with latest changes)
   final List<List<Color>> cardGradients = [
     [
       const Color.fromARGB(255, 123, 159, 76),
       const Color.fromARGB(255, 143, 179, 96),
     ],
     [
-<<<<<<< HEAD
-<<<<<<< HEAD
       const Color.fromARGB(255, 83, 119, 36),
       const Color.fromARGB(255, 103, 139, 56),
-=======
-      const Color.fromARGB(255, 113, 149, 66),
-      const Color.fromARGB(255, 133, 169, 86),
->>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
-=======
-      const Color.fromARGB(255, 83, 119, 36),
-      const Color.fromARGB(255, 103, 139, 56),
->>>>>>> 36015d6 (Update project with latest changes)
     ],
     [
       const Color.fromARGB(255, 103, 139, 56),
       const Color.fromARGB(255, 123, 159, 76),
     ],
     [
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 36015d6 (Update project with latest changes)
       const Color.fromARGB(255, 113, 149, 66),
       const Color.fromARGB(255, 133, 169, 86),
     ],
     [
-<<<<<<< HEAD
-=======
->>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
-=======
->>>>>>> 36015d6 (Update project with latest changes)
       const Color.fromARGB(255, 93, 129, 46),
       const Color.fromARGB(255, 113, 149, 66),
     ],
     [
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-      const Color.fromARGB(255, 83, 119, 36),
-      const Color.fromARGB(255, 103, 139, 56),
-    ],
-    [
->>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
-=======
->>>>>>> 36015d6 (Update project with latest changes)
       const Color.fromARGB(255, 73, 109, 26),
       const Color.fromARGB(255, 93, 129, 46),
     ],
@@ -138,22 +80,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           .doc('crops_available')
           .collection('crops')
           .get();
-<<<<<<< HEAD
-<<<<<<< HEAD
-      print(
-          "Fetched documents: ${snapshot.docs.map((doc) => doc.id).toList()}");
-=======
-      print("Fetched documents: ${snapshot.docs.map((doc) => doc.id).toList()}");
->>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
-=======
-      print("Fetched documents: ${snapshot.docs.map((doc) => doc.id).toList()}");
->>>>>>> 36015d6 (Update project with latest changes)
 
-      List<String> cropIds = [];
-      for (var doc in snapshot.docs) {
-        cropIds.add(doc.id);
-      }
-      return cropIds;
+      return snapshot.docs.map((doc) => doc.id).toList();
     } catch (e) {
       print("Error fetching crop IDs: $e");
       return [];
@@ -163,20 +91,12 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-<<<<<<< HEAD
-<<<<<<< HEAD
       backgroundColor: Colors.grey[100],
-=======
-      backgroundColor: Colors.grey[100], // Light background to make cards pop
->>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
-=======
-      backgroundColor: Colors.grey[100],
->>>>>>> 36015d6 (Update project with latest changes)
       appBar: AppBar(
         title: const Text(
           'Home',
           style: TextStyle(
-            color: Color.fromARGB(255, 0, 0, 0),
+            color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -194,7 +114,6 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text("No crops available"));
           } else {
-            List<String> cropIds = snapshot.data!;
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: ListView.builder(
@@ -203,9 +122,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: GestureDetector(
-                      onTap: () {
-                        _navigateToUniqueScreen(context, index, cropIds);
-                      },
+                      onTap: () => _navigateToUniqueScreen(context, index),
                       child: Container(
                         height: 140,
                         decoration: BoxDecoration(
@@ -224,44 +141,47 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             ),
                           ],
                         ),
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              left: 20,
-                              top: 20,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    cardTexts[index],
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      cardTexts[index],
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    cardDescriptions[index],
-                                    style: TextStyle(
-                                      color: Colors.white.withOpacity(0.9),
-                                      fontSize: 16,
+                                    Flexible(
+                                      child: Text(
+                                        cardDescriptions[index],
+                                        style: TextStyle(
+                                          color: Colors.white.withOpacity(0.9),
+                                          fontSize: 14,
+                                        ),
+                                        softWrap: true,
+                                        maxLines: 2, // Ensures consistent height
+                                        overflow: TextOverflow.ellipsis, // Handles overflow gracefully
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            Positioned(
-                              right: 20,
-                              bottom: 20,
-                              child: Image.asset(
+                              const SizedBox(width: 16),
+                              Image.asset(
                                 cardImages[index],
                                 width: 40,
                                 height: 40,
                                 color: Colors.white.withOpacity(0.9),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -275,65 +195,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     );
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  void _navigateToUniqueScreen(
-      BuildContext context, int index, List<String> cropIds) {
-    switch (index) {
-      case 0:
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const CurrentPrices()));
-        break;
-      case 1:
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const PriceChanges()));
-        break;
-      case 2:
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const MarketTrends()));
-        break;
-      case 3:
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const CropListScreen()));
-        break;
-      case 4:
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const UserCropReport()));
-        break;
-      case 5:
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const Markets()));
-        break;
-    }
-  }
-}
-=======
-  void _navigateToUniqueScreen(BuildContext context, int index, List<String> cropIds) {
-    switch (index) {
-      case 0:
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const CurrentPrices()));
-        break;
-      case 1:
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const CropListScreen()));
-        break;
-      case 2:
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const MarketTrends()));
-        break;
-      case 3:
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const UserCropReport()));
-        break;
-      case 4:
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const PriceChanges()));
-        break;
-      case 5:
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const Markets()));
-        break;
-    }
-  }
-}
->>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
-=======
-  void _navigateToUniqueScreen(BuildContext context, int index, List<String> cropIds) {
+  void _navigateToUniqueScreen(BuildContext context, int index) {
     switch (index) {
       case 0:
         Navigator.push(context, MaterialPageRoute(builder: (context) => const CurrentPrices()));
@@ -356,4 +218,3 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     }
   }
 }
->>>>>>> 36015d6 (Update project with latest changes)

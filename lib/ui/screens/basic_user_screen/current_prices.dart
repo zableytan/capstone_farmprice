@@ -41,7 +41,7 @@ class _CurrentPricesState extends State<CurrentPrices> {
         children: [
           // Search Bar
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -59,30 +59,14 @@ class _CurrentPricesState extends State<CurrentPrices> {
                 controller: _searchController,
                 onChanged: (value) {
                   setState(() {
-                    _searchQuery = value.toLowerCase();
+                    _searchQuery = value.trim().toLowerCase();
                   });
                 },
                 decoration: InputDecoration(
                   hintText: 'Search crops...',
-                  prefixIcon: const Icon(
-                    Icons.search,
-                    color: Color(0xFF133c0b),
-                  ),
+                  prefixIcon: const Icon(Icons.search, color: Color(0xFF133c0b)),
                   suffixIcon: _searchQuery.isNotEmpty
                       ? IconButton(
-<<<<<<< HEAD
-<<<<<<< HEAD
-                          icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            setState(() {
-                              _searchController.clear();
-                              _searchQuery = '';
-                            });
-                          },
-                        )
-=======
-=======
->>>>>>> 36015d6 (Update project with latest changes)
                     icon: const Icon(Icons.clear),
                     onPressed: () {
                       setState(() {
@@ -91,10 +75,6 @@ class _CurrentPricesState extends State<CurrentPrices> {
                       });
                     },
                   )
-<<<<<<< HEAD
->>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
-=======
->>>>>>> 36015d6 (Update project with latest changes)
                       : null,
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(
@@ -118,55 +98,43 @@ class _CurrentPricesState extends State<CurrentPrices> {
                   return const CustomLoadingIndicator();
                 }
                 if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
-                if (snapshot.data?.docs.isEmpty ?? true) {
-                  return const NoMarketAvailable(screenName: 'crops');
-                }
-
-                // Sort and filter the crops
-                List<QueryDocumentSnapshot> sortedCrops = snapshot.data!.docs;
-                sortedCrops.sort((a, b) {
-                  double aPrice = (a['retailPrice'] ?? 0).toDouble();
-                  double bPrice = (b['retailPrice'] ?? 0).toDouble();
-                  return bPrice.compareTo(aPrice);
-                });
-
-                // Filter based on search query
-                if (_searchQuery.isNotEmpty) {
-                  sortedCrops = sortedCrops.where((crop) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-                    final cropName =
-                        (crop['cropName'] ?? '').toString().toLowerCase();
-=======
-                    final cropName = (crop['cropName'] ?? '').toString().toLowerCase();
->>>>>>> b25cef6b6450268ccac5668cf1f723682b9906b9
-=======
-                    final cropName = (crop['cropName'] ?? '').toString().toLowerCase();
->>>>>>> 36015d6 (Update project with latest changes)
-                    return cropName.contains(_searchQuery);
-                  }).toList();
+                  return Center(
+                    child: Text(
+                      'Failed to load data. Please try again later.',
+                      style: TextStyle(
+                        color: Colors.redAccent,
+                        fontSize: 16,
+                      ),
+                    ),
+                  );
                 }
 
-                // Show "No results found" if search yields no results
-                if (sortedCrops.isEmpty && _searchQuery.isNotEmpty) {
+                final List<QueryDocumentSnapshot> crops = snapshot.data?.docs ?? [];
+
+                // Filter and sort crops
+                final List<QueryDocumentSnapshot> filteredCrops = _filterAndSortCrops(crops);
+
+                // Display feedback for empty lists
+                if (filteredCrops.isEmpty) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.search_off,
+                          Icons.info_outline,
                           size: 64,
                           color: Colors.grey[400],
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'No crops found for "$_searchQuery"',
+                          _searchQuery.isNotEmpty
+                              ? 'No crops found for "$_searchQuery"'
+                              : 'No crops available at the moment.',
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 16,
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ],
                     ),
@@ -174,16 +142,16 @@ class _CurrentPricesState extends State<CurrentPrices> {
                 }
 
                 return GridView.builder(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 1,
-                    crossAxisSpacing: 5,
-                    mainAxisSpacing: 5,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
                     childAspectRatio: 4.5,
                   ),
-                  itemCount: sortedCrops.length,
+                  itemCount: filteredCrops.length,
                   itemBuilder: (context, index) {
-                    var cropInfo = sortedCrops[index];
+                    var cropInfo = filteredCrops[index];
                     return UserCurrentPriceCard(
                       cropInfo: cropInfo,
                     );
@@ -195,5 +163,27 @@ class _CurrentPricesState extends State<CurrentPrices> {
         ],
       ),
     );
+  }
+
+  /// Filters and sorts crops based on search query and price
+  List<QueryDocumentSnapshot> _filterAndSortCrops(List<QueryDocumentSnapshot> crops) {
+    List<QueryDocumentSnapshot> sortedCrops = crops;
+
+    // Sort by descending retail price
+    sortedCrops.sort((a, b) {
+      double aPrice = (a['retailPrice'] ?? 0).toDouble();
+      double bPrice = (b['retailPrice'] ?? 0).toDouble();
+      return bPrice.compareTo(aPrice);
+    });
+
+    // Filter based on search query
+    if (_searchQuery.isNotEmpty) {
+      sortedCrops = sortedCrops.where((crop) {
+        final cropName = (crop['cropName'] ?? '').toString().toLowerCase();
+        return cropName.contains(_searchQuery);
+      }).toList();
+    }
+
+    return sortedCrops;
   }
 }
