@@ -98,7 +98,7 @@ class _CurrentPricesState extends State<CurrentPrices> {
                   return const CustomLoadingIndicator();
                 }
                 if (snapshot.hasError) {
-                  return Center(
+                  return const Center(
                     child: Text(
                       'Failed to load data. Please try again later.',
                       style: TextStyle(

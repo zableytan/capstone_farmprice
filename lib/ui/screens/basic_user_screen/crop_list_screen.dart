@@ -30,7 +30,7 @@ class _CropListScreenState extends State<CropListScreen> {
         preferredSize: Size.fromHeight(AppBar().preferredSize.height),
         child: CustomAppBar(
           backgroundColor: const Color(0xFF133c0b).withOpacity(0.3),
-          titleText: "Historical Data", // Changed from "Prices Today"
+          titleText: "Historical Data",
           fontColor: const Color(0xFF3C4D48),
           onLeadingPressed: () {
             Navigator.pop(context);
@@ -151,39 +151,42 @@ class _CropListScreenState extends State<CropListScreen> {
                           elevation: 2,
                           margin: const EdgeInsets.all(8),
                           child: ListTile(
-                            leading: cropInfo['cropImage'] != null &&
-                                cropInfo['cropImage'].isNotEmpty
-                                ? ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                cropInfo['cropImage'],
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                                : ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.asset(
-                                'lib/ui/assets/no_image.jpeg',
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            title: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    '${cropInfo['cropName'] ?? 'Unknown Crop'}',
-                                    style: const TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                            leading: Padding(
+                              padding: const EdgeInsets.only(top: 6.0), // Adjusted to center image
+                              child: cropInfo['cropImage'] != null &&
+                                  cropInfo['cropImage'].isNotEmpty
+                                  ? ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: Image.network(
+                                    cropInfo['cropImage'],
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
-                              ],
+                              )
+                                  : ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: Image.asset(
+                                    'lib/ui/assets/no_image.jpeg',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            title: Padding(
+                              padding: const EdgeInsets.only(top: 8.0), // Adjusted to position the text
+                              child: Text(
+                                '${cropInfo['cropName'] ?? 'Unknown Crop'}',
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                             trailing: const Icon(Icons.arrow_forward),
                           ),
