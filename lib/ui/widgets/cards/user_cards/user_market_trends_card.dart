@@ -60,13 +60,13 @@ class RankingBox extends StatelessWidget {
     if (rank == 1) {
       return const Color(0xFFFFD700).withOpacity(0.85); // Gold
     } else if (rank == 2) {
-      return const Color(0xFFC0C0C0).withOpacity(0.85); // Silver
+      return const Color(0xFFCACACA).withOpacity(0.9); // Silver
     } else if (rank == 3) {
       return const Color(0xFFCD7F32).withOpacity(0.85); // Bronze
     } else if (rank <= 5) {
-      return const Color(0xFFC0C0C0).withOpacity(0.5); // Light Silver
+      return const Color(0xFFC0C0C0).withOpacity(0.3); // Light Silver
     } else {
-      return const Color(0xFFC0C0C0).withOpacity(0.5); // Light Bronze
+      return const Color(0xFFC0C0C0).withOpacity(0.3); // Light Bronze
     }
   }
 

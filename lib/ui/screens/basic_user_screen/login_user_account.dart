@@ -22,8 +22,8 @@ class _LoginUserAccountState extends State<LoginUserAccount> {
     try {
       final success = await AuthService().signIn(
         context: context,
-        username: "doa.hcdc@gmail.com",
-        password: "admin.hcdc2024",
+        username: "fm.admin@hcdc.edu.ph",
+        password: "admin123",
         userType: "user",
       );
 

@@ -46,28 +46,28 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
 
   final List<List<Color>> cardGradients = [
     [
-      const Color.fromARGB(255, 123, 159, 76),
-      const Color.fromARGB(255, 143, 179, 96),
-    ],
-    [
-      const Color.fromARGB(255, 83, 119, 36),
-      const Color.fromARGB(255, 103, 139, 56),
-    ],
-    [
-      const Color.fromARGB(255, 103, 139, 56),
-      const Color.fromARGB(255, 123, 159, 76),
-    ],
-    [
-      const Color.fromARGB(255, 113, 149, 66),
-      const Color.fromARGB(255, 133, 169, 86),
-    ],
-    [
-      const Color.fromARGB(255, 93, 129, 46),
-      const Color.fromARGB(255, 113, 149, 66),
+      const Color.fromARGB(255, 73, 109, 26),
+      const Color.fromARGB(255, 73, 109, 26),
     ],
     [
       const Color.fromARGB(255, 73, 109, 26),
-      const Color.fromARGB(255, 93, 129, 46),
+      const Color.fromARGB(255, 73, 109, 26),
+    ],
+    [
+      const Color.fromARGB(255, 73, 109, 26),
+      const Color.fromARGB(255, 73, 109, 26),
+    ],
+    [
+      const Color.fromARGB(255, 73, 109, 26),
+      const Color.fromARGB(255, 73, 109, 26),
+    ],
+    [
+      const Color.fromARGB(255, 73, 109, 26),
+      const Color.fromARGB(255, 73, 109, 26),
+    ],
+    [
+      const Color.fromARGB(255, 73, 109, 26),
+      const Color.fromARGB(255, 73, 109, 26),
     ],
   ];
 

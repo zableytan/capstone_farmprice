@@ -240,8 +240,8 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
                     child: SfCartesianChart(
                       primaryXAxis:
                       const CategoryAxis(title: AxisTitle(text: 'Date')),
-                      primaryYAxis: NumericAxis(
-                        title: const AxisTitle(text: 'Price'),
+                      primaryYAxis: const NumericAxis(
+                        title: AxisTitle(text: 'Price'),
                         labelFormat: '₱{value}',
                       ),
                       tooltipBehavior: _tooltip,
