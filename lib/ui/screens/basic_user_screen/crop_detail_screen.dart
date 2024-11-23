@@ -33,19 +33,16 @@ class CropDetailsScreen extends StatelessWidget {
             // Crop Image
             cropImage.isNotEmpty
                 ? ClipRRect(
-              borderRadius:
-              BorderRadius.circular(12), // Adjust corner round
+              borderRadius: BorderRadius.circular(12), // Adjust corner round
               child: Image.network(
                 cropImage,
                 height: 150,
-                width:
-                MediaQuery.sizeOf(context).width, // Set a fixed width
+                width: MediaQuery.sizeOf(context).width, // Set a fixed width
                 fit: BoxFit.fitWidth, // Maintain aspect ratio
               ),
             )
                 : ClipRRect(
-              borderRadius:
-              BorderRadius.circular(12), // Adjust corner round
+              borderRadius: BorderRadius.circular(12), // Adjust corner round
               child: Image.asset(
                 "lib/ui/assets/no_image.jpeg",
                 height: 150, // Set a fixed height for placeholder
@@ -58,8 +55,7 @@ class CropDetailsScreen extends StatelessWidget {
             Center(
               child: Text(
                 '$cropName',
-                style:
-                const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 10),
@@ -140,6 +136,25 @@ class CropDetailsScreen extends StatelessWidget {
                     style: const TextStyle(fontSize: 20),
                   ),
                 ],
+              ),
+            ),
+
+            const Spacer(),
+
+            // Footer Section - Source Information
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                child: Text(
+                  'Data provided by Davao Food Terminal Complex (DFTC)',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[700],
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
             ),
           ],

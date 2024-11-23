@@ -64,10 +64,56 @@ class LandingScreen extends StatelessWidget {
             // SIZED BOX
             const Spacer(),
 
+            // PARTNERS SECTION
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              child: const Column(
+                children: [
+                  Text(
+                    "Our Partners",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF133c0b),
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // DFTC Logo
+                      CustomImageDisplay(
+                        imageSource: "lib/ui/assets/dftc_logo.jpg", // Add the correct logo path
+                        imageHeight: 50,
+                        imageWidth: 50,
+                      ),
+                      SizedBox(width: 20),
+                      // Department of Agriculture Logo
+                      CustomImageDisplay(
+                        imageSource: "lib/ui/assets/da_logo.png", // Add the correct logo path
+                        imageHeight: 50,
+                        imageWidth: 50,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Davao Food Terminal Complex - DFTC\nDepartment of Agriculture",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
             // ADMIN ACCESS
             TextButton(
               style: ButtonStyle(
-                foregroundColor: WidgetStateProperty.all<Color>(
+                foregroundColor: MaterialStateProperty.all<Color>(
                   const Color.fromARGB(255, 38, 63, 4),
                 ),
               ),

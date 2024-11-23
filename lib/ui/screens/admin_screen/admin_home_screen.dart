@@ -144,8 +144,12 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
               // GENERATE EXCEL FILE
               _buildButtonContainers(
-                    () {
-                  generateCropsReport(context); // Call generateCropsReport
+                    () async {
+                  // Show confirmation dialog before generating the report
+                  bool confirm = await _showConfirmationDialog(context);
+                  if (confirm) {
+                    generateCropsReport(context); // Call generateCropsReport
+                  }
                 },
                 'lib/ui/assets/excel_icon.png',
                 "Generate Excel Report",
@@ -210,5 +214,29 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         ),
       ),
     );
+  }
+
+  /// Show confirmation dialog before generating the report
+  Future<bool> _showConfirmationDialog(BuildContext context) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Generate Excel Report'),
+          content: const Text('Are you sure you want to generate the Excel report?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false), // Cancel
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true), // Confirm
+              child: const Text('Generate'),
+            ),
+          ],
+        );
+      },
+    ) ??
+        false;
   }
 }
