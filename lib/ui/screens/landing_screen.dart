@@ -11,112 +11,51 @@ class LandingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    final logoMargin = screenHeight * 0.1;
 
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) {
-        if (!didPop) {
-          return;
-        }
-        Navigator.of(context).pop;
-      },
-      child: Scaffold(
-        body: Column(
-          children: <Widget>[
-            // APP LOGO
-            Center(
-              child: Container(
-                margin: EdgeInsets.only(top: logoMargin, bottom: 10),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return CustomImageDisplay(
-                      imageSource: "lib/ui/assets/farm_price_logo.png",
-                      imageHeight: screenHeight * 0.5,
-                      imageWidth: screenWidth * 0.6,
-                    );
-                  },
-                ),
+    return Scaffold(
+      body: Column(
+        children: [
+          // APP LOGO
+          Center(
+            child: Container(
+              margin: const EdgeInsets.only(top: 50, bottom: 20), // Adjust top margin to add spacing
+              child: CustomImageDisplay(
+                imageSource: "lib/ui/assets/farm_price_logo.png",
+                imageHeight: screenHeight * 0.4,
+                imageWidth: screenWidth * 0.6,
               ),
             ),
+          ),
 
-            // CONTINUE BUTTON
-            Container(
-              padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.3),
-              child: CustomButton(
-                buttonLabel: "Continue",
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginUserAccount()),
-                  );
-                },
-                buttonColor: const Color(0xFF39590e),
-                buttonHeight: 45,
-                fontWeight: FontWeight.w500,
-                fontSize: 15,
-                fontColor: Colors.white,
-                borderRadius: 10,
-              ),
+          // CONTINUE BUTTON
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.2),
+            child: CustomButton(
+              buttonLabel: "Continue",
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LoginUserAccount(),
+                  ),
+                );
+              },
+              buttonColor: const Color(0xFF39590e),
+              buttonHeight: 45,
+              fontWeight: FontWeight.w500,
+              fontSize: 15,
+              fontColor: Colors.white,
+              borderRadius: 10,
             ),
+          ),
 
-            // SIZED BOX
-            const Spacer(),
+          // SPACING BETWEEN BUTTONS
+          const Spacer(),
 
-            // PARTNERS SECTION
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: const Column(
-                children: [
-                  Text(
-                    "Our Partners",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF133c0b),
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // DFTC Logo
-                      CustomImageDisplay(
-                        imageSource: "lib/ui/assets/dftc_logo.jpg", // Add the correct logo path
-                        imageHeight: 50,
-                        imageWidth: 50,
-                      ),
-                      SizedBox(width: 20),
-                      // Department of Agriculture Logo
-                      CustomImageDisplay(
-                        imageSource: "lib/ui/assets/da_logo.png", // Add the correct logo path
-                        imageHeight: 50,
-                        imageWidth: 50,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    "Davao Food Terminal Complex - DFTC\nDepartment of Agriculture",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // ADMIN ACCESS
-            TextButton(
-              style: ButtonStyle(
-                foregroundColor: MaterialStateProperty.all<Color>(
-                  const Color.fromARGB(255, 38, 63, 4),
-                ),
-              ),
+          // ADMIN ACCESS BUTTON - MOVED ABOVE PARTNERS
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.2),
+            child: OutlinedButton(
               onPressed: () {
                 Navigator.push(
                   context,
@@ -125,20 +64,78 @@ class LandingScreen extends StatelessWidget {
                   ),
                 );
               },
+              style: OutlinedButton.styleFrom(
+                backgroundColor: Colors.white, // White background
+                foregroundColor: const Color(0xFF78AB78), // Border and text color
+                side: const BorderSide(color: Color(0xFF78AB78), width: 2), // Border color and thickness
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,  // Adjust the vertical padding
+                  horizontal: 20,  // Adjust the horizontal padding here
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),  // Rounded corners
+                ),
+              ),
               child: const Text(
-                'ADMIN ACCESS',
+                "ADMIN ACCESS",
                 style: TextStyle(
-                  fontSize: 10.0,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF133c0b),
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
+          ),
 
-            // SPACING
-            const SizedBox(height: 10),
-          ],
-        ),
+
+          // PARTNERS SECTION - Now below the Admin Button
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            child: const Column(
+              children: [
+                Text(
+                  "Our Partners",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF133c0b),
+                  ),
+                ),
+                SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // DFTC Logo
+                    CustomImageDisplay(
+                      imageSource: "lib/ui/assets/dftc_logo.jpg",
+                      imageHeight: 50,
+                      imageWidth: 50,
+                    ),
+                    SizedBox(width: 20),
+                    // Department of Agriculture Logo
+                    CustomImageDisplay(
+                      imageSource: "lib/ui/assets/da_logo.png",
+                      imageHeight: 50,
+                      imageWidth: 50,
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Text(
+                  "Davao Food Terminal Complex - DFTC\nDepartment of Agriculture",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // SPACING
+          const SizedBox(height: 10),
+        ],
       ),
     );
   }

@@ -120,8 +120,7 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
 
       final now = DateTime.now();
       final past5Days = List.generate(5, (index) {
-        final date =
-        DateFormat('MM/dd/yyyy').format(now.subtract(Duration(days: index)));
+        final date = DateFormat('MM/dd/yyyy').format(now.subtract(Duration(days: index)));
         return data.firstWhere(
               (item) => item.date == date,
           orElse: () => _PriceData(date, 0),
@@ -185,12 +184,9 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Display Crop Image (Above Filters)
               cropImage.isNotEmpty
                   ? Image.network(cropImage, height: MediaQuery.of(context).size.height * 0.25)
-                  : const SizedBox(height: 200), // Default empty box if no image
-
-              // Year, Month, Day Filters
+                  : const SizedBox(height: 200),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Row(
@@ -198,19 +194,19 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
                     Expanded(
                       child: DropdownButton<String>(
                         value: selectedYear.isNotEmpty ? selectedYear : null,
-                        hint: const Text('Select Year'),
+                        hint: const Text('Year'),
                         onChanged: (newValue) {
                           setState(() {
                             selectedYear = newValue!;
-                            selectedMonth = '';  // Reset month on year change
-                            selectedDay = '';  // Reset day on year change
+                            selectedMonth = '';
+                            selectedDay = '';
                             _loadCropData();
                           });
                         },
                         items: ['2024', '2023', '2022', '2021', '2020']
                             .map((year) => DropdownMenuItem(
                           value: year,
-                          child: Text(year),
+                          child: Center(child: Text(year)),
                         ))
                             .toList(),
                       ),
@@ -219,18 +215,18 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
                     Expanded(
                       child: DropdownButton<String>(
                         value: selectedMonth.isNotEmpty ? selectedMonth : null,
-                        hint: const Text('Select Month'),
+                        hint: const Text('Month'),
                         onChanged: (newValue) {
                           setState(() {
                             selectedMonth = newValue!;
-                            selectedDay = '';  // Reset day on month change
+                            selectedDay = '';
                             _loadCropData();
                           });
                         },
                         items: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
                             .map((month) => DropdownMenuItem(
                           value: month,
-                          child: Text(month),
+                          child: Center(child: Text(month)),
                         ))
                             .toList(),
                       ),
@@ -239,7 +235,7 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
                     Expanded(
                       child: DropdownButton<String>(
                         value: selectedDay.isNotEmpty ? selectedDay : null,
-                        hint: const Text('Select Day'),
+                        hint: const Text('Day'),
                         onChanged: (newValue) {
                           setState(() {
                             selectedDay = newValue!;
@@ -249,7 +245,7 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
                         items: daysInMonth
                             .map((day) => DropdownMenuItem(
                           value: day,
-                          child: Text(day),
+                          child: Center(child: Text(day)),
                         ))
                             .toList(),
                       ),
@@ -272,20 +268,31 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton.icon(
-                      onPressed: _previousCrop,
-                      icon: const Icon(Icons.arrow_back),
-                      label: const Text('Previous'),
+                      onPressed: currentIndex > 0 ? _previousCrop : null,
+                      icon: const Icon(Icons.arrow_back, color: Colors.white), // Arrow color set to white
+                      label: const Text(
+                        'Previous',
+                        style: TextStyle(color: Colors.white), // Text color set to white
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: currentIndex > 0 ? Colors.green : Colors.grey,
+                      ),
                     ),
                     const SizedBox(width: 20),
                     ElevatedButton.icon(
-                      onPressed: _nextCrop,
-                      icon: const Icon(Icons.arrow_forward),
-                      label: const Text('Next'),
+                      onPressed: currentIndex < filteredCropIds.length - 1 ? _nextCrop : null,
+                      icon: const Icon(Icons.arrow_forward, color: Colors.white), // Arrow color set to white
+                      label: const Text(
+                        'Next',
+                        style: TextStyle(color: Colors.white), // Text color set to white
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: currentIndex < filteredCropIds.length - 1 ? Colors.green : Colors.grey,
+                      ),
                     ),
                   ],
                 ),
               ),
-              // Add the source text below the buttons
               Padding(
                 padding: const EdgeInsets.only(top: 20.0),
                 child: Align(
