@@ -93,7 +93,7 @@ class LandingScreen extends StatelessWidget {
             child: const Column(
               children: [
                 Text(
-                  "Our Partners",
+                  "Data Source",
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,

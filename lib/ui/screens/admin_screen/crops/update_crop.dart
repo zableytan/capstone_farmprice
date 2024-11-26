@@ -25,9 +25,9 @@ class _UpdateCropState extends State<UpdateCrop> {
   final TextEditingController _cropNameController = TextEditingController();
   final TextEditingController _retailPriceController = TextEditingController();
   final TextEditingController _oldRetailPriceController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _wholeSalePriceController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _landingPriceController = TextEditingController();
 
   // FOCUS NODES
@@ -41,6 +41,7 @@ class _UpdateCropState extends State<UpdateCrop> {
   String? imageULR;
   String? oldImageURL;
   bool isLoading = true;
+  DateTime? selectedDate; // New date selection variable
 
   // INITIALIZE
   @override
@@ -62,6 +63,21 @@ class _UpdateCropState extends State<UpdateCrop> {
     _landingPriceFocusNode.dispose();
     _oldRetailPriceController.dispose();
     super.dispose();
+  }
+
+  // DATE SELECTION METHOD
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
   }
 
   // MARKET VIEW IMAGE
@@ -92,6 +108,7 @@ class _UpdateCropState extends State<UpdateCrop> {
           imageULR = data['cropImage'];
           oldImageURL = imageULR;
           _oldRetailPriceController.text = data['retailPrice'].toString();
+          selectedDate = data['date'] != null ? DateTime.parse(data['date']) : null;
         });
       }
     } catch (e) {
@@ -114,8 +131,10 @@ class _UpdateCropState extends State<UpdateCrop> {
       landingPrice: double.parse(_landingPriceController.text),
       cropImage: cropImage,
       oldImageURL: oldImageURL,
+      date: selectedDate, // Pass selectedDate; if null, method defaults to current date
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -262,6 +281,37 @@ class _UpdateCropState extends State<UpdateCrop> {
             // SPACING
             const SizedBox(height: 10),
 
+            // DATE SELECTION
+            const Text(
+              "Date",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF3C4D48),
+              ),
+            ),
+            const SizedBox(height: 2),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  side: const BorderSide(color: Colors.grey),
+                ),
+              ),
+              onPressed: () => _selectDate(context),
+              child: Text(
+                selectedDate == null
+                    ? 'Select Date'
+                    : '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}',
+                style: const TextStyle(color: Color(0xFF3C4D48)),
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
             const Text(
               "Market Image",
               style: TextStyle(
@@ -294,71 +344,71 @@ class _UpdateCropState extends State<UpdateCrop> {
               },
               child: cropImage != null || imageULR != null
                   ? Stack(
-                      children: <Widget>[
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: cropImage != null
-                              ? Image.file(
-                                  File(cropImage!.path!),
-                                  // Use the path of the selected image
-                                  width: double.infinity,
-                                  height: 130,
-                                  fit: BoxFit.cover,
-                                )
-                              : Image.network(
-                                  imageULR ??
-                                      '', // Check for imageULR null value
-                                  width: double.infinity,
-                                  height: 130,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Image.asset(
-                                      "lib/ui/assets/no_image.jpeg", // Default image path
-                                      fit: BoxFit.cover,
-                                      height: 120,
-                                      width: double.infinity,
-                                    );
-                                  },
-                                ),
-                        ),
-                        Positioned(
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                cropImage = null;
-                                imageULR = null;
-                              });
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.all(5),
-                              child: const Icon(
-                                Icons.clear_rounded,
-                                color: Color(0xFFF5F5F5),
-                                size: 15,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                children: <Widget>[
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: cropImage != null
+                        ? Image.file(
+                      File(cropImage!.path!),
+                      // Use the path of the selected image
+                      width: double.infinity,
+                      height: 130,
+                      fit: BoxFit.cover,
                     )
-                  : const Center(
-                      child: Column(
-                        children: <Widget>[
-                          Icon(
-                            Icons.add_a_photo_rounded,
-                            color: Colors.grey,
-                          ),
-                          Text(
-                            "Market View",
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
+                        : Image.network(
+                      imageULR ??
+                          '', // Check for imageULR null value
+                      width: double.infinity,
+                      height: 130,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          "lib/ui/assets/no_image.jpeg", // Default image path
+                          fit: BoxFit.cover,
+                          height: 120,
+                          width: double.infinity,
+                        );
+                      },
+                    ),
+                  ),
+                  Positioned(
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          cropImage = null;
+                          imageULR = null;
+                        });
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(5),
+                        child: const Icon(
+                          Icons.clear_rounded,
+                          color: Color(0xFFF5F5F5),
+                          size: 15,
+                        ),
                       ),
                     ),
+                  ),
+                ],
+              )
+                  : const Center(
+                child: Column(
+                  children: <Widget>[
+                    Icon(
+                      Icons.add_a_photo_rounded,
+                      color: Colors.grey,
+                    ),
+                    Text(
+                      "Market View",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
 
             // SPACING

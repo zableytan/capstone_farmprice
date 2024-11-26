@@ -26,6 +26,7 @@ class CustomButton extends StatelessWidget {
     required this.borderRadius,
     this.borderWidth = 1.0,
     this.borderColor = Colors.transparent,
+
   });
 
   @override

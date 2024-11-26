@@ -471,9 +471,7 @@ class FirebaseService {
   }
 
 
-  // UPDATE: CROP
   static Future<void> updateCropInfo({
-    // PARAMETERS NEEDED
     required BuildContext context,
     required String cropID,
     required String cropName,
@@ -483,6 +481,7 @@ class FirebaseService {
     required double landingPrice,
     PlatformFile? cropImage,
     String? oldImageURL,
+    DateTime? date,
   }) async {
     try {
       // DISPLAY LOADING DIALOG
@@ -501,7 +500,7 @@ class FirebaseService {
         throw Exception("Image upload failed, no image available to update.");
       }
 
-      // Update the market data
+      // Update crop data
       await FirebaseFirestore.instance
           .collection('admin_accounts')
           .doc('crops_available')
@@ -510,26 +509,43 @@ class FirebaseService {
           .update({
         'cropName': cropName,
         'retailPrice': retailPrice,
-        'previousRetailPrice': retailPrice,
+        'previousRetailPrice': oldRetailPrice,
         'wholeSalePrice': wholeSalePrice,
         'landingPrice': landingPrice,
-        'oldRetailPrice': oldRetailPrice,
         'cropImage': updatedImageURL ?? oldImageURL,
       });
 
-      // Now save the price to the history for today's date
+      // Check for existing history on the same date
       await FirebaseFirestore.instance
           .collection('admin_accounts')
           .doc('crops_available')
           .collection('crops')
           .doc(cropID)
           .collection('crop_price_history')
-          .add({
-        'date': Timestamp.fromDate(DateTime.now()), // Save today's date
-        'price': retailPrice, // Save the updated retail price
+          .where('date', isEqualTo: Timestamp.fromDate(date ?? DateTime.now()))
+          .get()
+          .then((querySnapshot) async {
+        if (querySnapshot.docs.isNotEmpty) {
+          // Update existing document
+          await querySnapshot.docs.first.reference.update({
+            'price': retailPrice,
+          });
+        } else {
+          // Add new document
+          await FirebaseFirestore.instance
+              .collection('admin_accounts')
+              .doc('crops_available')
+              .collection('crops')
+              .doc(cropID)
+              .collection('crop_price_history')
+              .add({
+            'date': Timestamp.fromDate(date ?? DateTime.now()),
+            'price': retailPrice,
+          });
+        }
       });
 
-      // IF ADDING SERVICE SUCCESSFUL
+      // IF SUCCESSFUL
       if (context.mounted) {
         // Dismiss loading dialog
         Navigator.of(context).pop();
@@ -541,11 +557,11 @@ class FirebaseService {
         Navigator.of(context).pop();
       }
     } catch (e) {
-      // IF ADDING SERVICE FAILED
+      // IF FAILED
       if (context.mounted) {
         showFloatingSnackBar(
           context,
-          "Error updating services: ${e.toString()}",
+          "Error updating crop: ${e.toString()}",
           const Color(0xFFe91b4f),
         );
         // Dismiss loading dialog
@@ -553,6 +569,9 @@ class FirebaseService {
       }
     }
   }
+
+
+
 
   // DELETE: CROP
   static Future<void> deleteCrop(

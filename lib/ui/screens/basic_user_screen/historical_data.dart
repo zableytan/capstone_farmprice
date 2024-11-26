@@ -89,7 +89,7 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
       final cropDetails = cropDoc.data()!;
       setState(() {
         cropName = cropDetails['cropName'] ?? 'Unknown Crop';
-        cropImage = cropDetails['cropImage'] ?? '';
+        cropImage = cropDetails['cropImage'] ?? ''; // Assign cropImage from Firestore
       });
 
       Query query = FirebaseFirestore.instance
@@ -100,35 +100,39 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
           .collection('crop_price_history')
           .orderBy('date', descending: true);
 
+      // Build date range filter
+      DateTime? startDate;
       if (selectedYear.isNotEmpty) {
-        query = query.where('date', isGreaterThanOrEqualTo: DateTime.parse('$selectedYear-01-01'));
-      }
-      if (selectedMonth.isNotEmpty) {
-        query = query.where('date', isGreaterThanOrEqualTo: DateTime.parse('$selectedYear-$selectedMonth-01'));
-      }
-      if (selectedDay.isNotEmpty) {
-        query = query.where('date', isGreaterThanOrEqualTo: DateTime.parse('$selectedYear-$selectedMonth-$selectedDay'));
+        if (selectedMonth.isNotEmpty) {
+          if (selectedDay.isNotEmpty) {
+            // Specific day selected
+            startDate = DateTime.parse('$selectedYear-$selectedMonth-$selectedDay');
+          } else {
+            // Specific month selected
+            startDate = DateTime.parse('$selectedYear-$selectedMonth-01');
+          }
+        } else {
+          // Specific year selected
+          startDate = DateTime.parse('$selectedYear-01-01');
+        }
+
+        // Add where clause for date filtering
+        query = query.where('date', isGreaterThanOrEqualTo: startDate);
       }
 
-      final snapshot = await query.limit(5).get();
+      // Remove limit to get all data
+      final snapshot = await query.get();
 
       final data = snapshot.docs.map((doc) {
         final date = (doc['date'] as Timestamp).toDate();
         final price = (doc['price'] as num).toDouble();
         return _PriceData(DateFormat('MM/dd/yyyy').format(date), price);
-      }).toList();
-
-      final now = DateTime.now();
-      final past5Days = List.generate(5, (index) {
-        final date = DateFormat('MM/dd/yyyy').format(now.subtract(Duration(days: index)));
-        return data.firstWhere(
-              (item) => item.date == date,
-          orElse: () => _PriceData(date, 0),
-        );
-      }).reversed.toList();
+      }).toList()
+      // Sort data chronologically
+        ..sort((a, b) => a.date.compareTo(b.date));
 
       setState(() {
-        priceData = past5Days;
+        priceData = data; // Use all retrieved data
         isLoading = false;
       });
     } catch (e) {
@@ -139,175 +143,219 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
     }
   }
 
+  // Add filter method
+  void _showFilterBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return Container(
+              padding: const EdgeInsets.all(20),
+              height: MediaQuery.of(context).size.height * 0.6,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Filter Data',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  // Year Dropdown
+                  DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: 'Select Year',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    value: selectedYear.isNotEmpty ? selectedYear : null,
+                    items: ['2024', '2023', '2022', '2021', '2020']
+                        .map((year) => DropdownMenuItem(
+                      value: year,
+                      child: Text(year),
+                    ))
+                        .toList(),
+                    onChanged: (newValue) {
+                      setModalState(() {
+                        selectedYear = newValue!;
+                        selectedMonth = '';
+                        selectedDay = '';
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 15),
+                  // Month Dropdown
+                  DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: 'Select Month',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    value: selectedMonth.isNotEmpty ? selectedMonth : null,
+                    items: [
+                      '01', '02', '03', '04', '05', '06',
+                      '07', '08', '09', '10', '11', '12'
+                    ]
+                        .map((month) => DropdownMenuItem(
+                      value: month,
+                      child: Text(month),
+                    ))
+                        .toList(),
+                    onChanged: selectedYear.isNotEmpty
+                        ? (newValue) {
+                      setModalState(() {
+                        selectedMonth = newValue!;
+                        selectedDay = '';
+                      });
+                    }
+                        : null,
+                  ),
+                  const SizedBox(height: 15),
+                  // Day Dropdown
+                  DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: 'Select Day',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    value: selectedDay.isNotEmpty ? selectedDay : null,
+                    items: daysInMonth
+                        .map((day) => DropdownMenuItem(
+                      value: day,
+                      child: Text(day),
+                    ))
+                        .toList(),
+                    onChanged: (selectedMonth.isNotEmpty && selectedYear.isNotEmpty)
+                        ? (newValue) {
+                      setModalState(() {
+                        selectedDay = newValue!;
+                      });
+                    }
+                        : null,
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          // Reset filters
+                          setModalState(() {
+                            selectedYear = '';
+                            selectedMonth = '';
+                            selectedDay = '';
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey[200],
+                        ),
+                        child: const Text('Reset'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Apply filters
+                          Navigator.pop(context);
+                          _loadCropData();
+                        },
+                        child: const Text('Apply'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   Widget _buildChart() {
     return SfCartesianChart(
       tooltipBehavior: _tooltip,
-      primaryXAxis: CategoryAxis(),
+      primaryXAxis: const CategoryAxis(
+        labelRotation: 45, // Rotate labels if many dates
+        interval: 1, // Show all labels
+        title: AxisTitle(
+          text: 'Date',
+          textStyle: TextStyle(color: Colors.green), // Set color for X-axis title
+        ),
+      ),
+      primaryYAxis: const NumericAxis(
+        title: AxisTitle(
+          text: 'Price (PHP)',
+          textStyle: TextStyle(color: Colors.green), // Set color for Y-axis title
+        ),
+      ),
       series: <CartesianSeries<_PriceData, String>>[
         LineSeries<_PriceData, String>(
           dataSource: priceData,
           xValueMapper: (_PriceData data, _) => data.date,
           yValueMapper: (_PriceData data, _) => data.price,
-          dataLabelSettings: const DataLabelSettings(isVisible: true),
-        )
+          name: 'Price',
+          markerSettings: const MarkerSettings(isVisible: true),
+          color: Colors.blue,
+        ),
       ],
     );
   }
 
-  void _previousCrop() {
-    setState(() {
-      if (currentIndex > 0) {
-        currentIndex--;
-        _loadCropData();
-      }
-    });
-  }
 
-  void _nextCrop() {
-    setState(() {
-      if (currentIndex < filteredCropIds.length - 1) {
-        currentIndex++;
-        _loadCropData();
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Data for $cropName"),
-        backgroundColor: const Color(0xFF133c0b).withOpacity(0.3),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              cropImage.isNotEmpty
-                  ? Image.network(cropImage, height: MediaQuery.of(context).size.height * 0.25)
-                  : const SizedBox(height: 200),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: DropdownButton<String>(
-                        value: selectedYear.isNotEmpty ? selectedYear : null,
-                        hint: const Text('Year'),
-                        onChanged: (newValue) {
-                          setState(() {
-                            selectedYear = newValue!;
-                            selectedMonth = '';
-                            selectedDay = '';
-                            _loadCropData();
-                          });
-                        },
-                        items: ['2024', '2023', '2022', '2021', '2020']
-                            .map((year) => DropdownMenuItem(
-                          value: year,
-                          child: Center(child: Text(year)),
-                        ))
-                            .toList(),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: DropdownButton<String>(
-                        value: selectedMonth.isNotEmpty ? selectedMonth : null,
-                        hint: const Text('Month'),
-                        onChanged: (newValue) {
-                          setState(() {
-                            selectedMonth = newValue!;
-                            selectedDay = '';
-                            _loadCropData();
-                          });
-                        },
-                        items: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
-                            .map((month) => DropdownMenuItem(
-                          value: month,
-                          child: Center(child: Text(month)),
-                        ))
-                            .toList(),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: DropdownButton<String>(
-                        value: selectedDay.isNotEmpty ? selectedDay : null,
-                        hint: const Text('Day'),
-                        onChanged: (newValue) {
-                          setState(() {
-                            selectedDay = newValue!;
-                            _loadCropData();
-                          });
-                        },
-                        items: daysInMonth
-                            .map((day) => DropdownMenuItem(
-                          value: day,
-                          child: Center(child: Text(day)),
-                        ))
-                            .toList(),
-                      ),
-                    ),
-                  ],
-                ),
+      appBar: AppBar(title: Text(cropName)),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Crop info and price
+            Card(
+              elevation: 5,
+              child: ListTile(
+                contentPadding: const EdgeInsets.all(10),
+                leading: cropImage.isNotEmpty
+                    ? Image.network(cropImage, width: 50, height: 50)
+                    : const Icon(Icons.image_not_supported),
+                title: Text(cropName, style: Theme.of(context).textTheme.titleLarge),
+                subtitle: Text('Last price: ${priceData.isNotEmpty ? priceData.last.price : 'N/A'} PHP'),
               ),
-              isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : errorMessage.isNotEmpty
-                  ? Center(child: Text(errorMessage))
-                  : Column(
-                children: [
-                  _buildChart(),
-                ],
+            ),
+            const SizedBox(height: 20),
+            // Filter button
+            ElevatedButton.icon(
+              onPressed: _showFilterBottomSheet,
+              icon: const Icon(Icons.filter_list),
+              label: const Text('Filter Data'),
+            ),
+            const SizedBox(height: 20),
+            // Error message if any
+            if (errorMessage.isNotEmpty)
+              Text(errorMessage, style: const TextStyle(color: Colors.red)),
+            const SizedBox(height: 20),
+            // Chart display
+            _buildChart(),
+            const SizedBox(height: 20),
+            // Add text at the bottom center
+            const Center(
+              child: Text(
+                'Data from Davao Food Terminal Complex (DFTC)',
+                style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic, color: Colors.grey),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton.icon(
-                      onPressed: currentIndex > 0 ? _previousCrop : null,
-                      icon: const Icon(Icons.arrow_back, color: Colors.white), // Arrow color set to white
-                      label: const Text(
-                        'Previous',
-                        style: TextStyle(color: Colors.white), // Text color set to white
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: currentIndex > 0 ? Colors.green : Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    ElevatedButton.icon(
-                      onPressed: currentIndex < filteredCropIds.length - 1 ? _nextCrop : null,
-                      icon: const Icon(Icons.arrow_forward, color: Colors.white), // Arrow color set to white
-                      label: const Text(
-                        'Next',
-                        style: TextStyle(color: Colors.white), // Text color set to white
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: currentIndex < filteredCropIds.length - 1 ? Colors.green : Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 20.0),
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    'Data provided by Davao Food Terminal Complex (DFTC)',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
