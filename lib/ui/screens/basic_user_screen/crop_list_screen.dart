@@ -147,7 +147,7 @@ class _CropListScreenState extends State<CropListScreen> {
                           );
                         },
                         child: Card(
-                          color: Colors.white,
+                          color: const Color(0xFFAFBAAB),
                           elevation: 2,
                           margin: const EdgeInsets.all(8),
                           child: ListTile(

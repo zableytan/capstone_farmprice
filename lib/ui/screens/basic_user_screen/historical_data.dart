@@ -301,14 +301,11 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
           xValueMapper: (_PriceData data, _) => data.date,
           yValueMapper: (_PriceData data, _) => data.price,
           name: 'Price',
-          markerSettings: const MarkerSettings(isVisible: true),
-          color: Colors.blue,
+          dataLabelSettings: const DataLabelSettings(isVisible: true),
         ),
       ],
     );
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -348,17 +345,60 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
             // Chart display
             _buildChart(),
             const SizedBox(height: 20),
-            // Add text at the bottom center
-            const Center(
-              child: Text(
-                'Data from Davao Food Terminal Complex (DFTC)',
-                style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic, color: Colors.grey),
-              ),
+            // Previous and Next buttons
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: _previousCrop,
+                  child: const Text('Previous'),
+                ),
+                ElevatedButton(
+                  onPressed: _nextCrop,
+                  child: const Text('Next'),
+                ),
+              ],
             ),
+            const SizedBox(height: 20),
+    const Align(
+      alignment: Alignment.bottomCenter,
+      child: Padding(
+        padding: EdgeInsets.only(bottom: 10), // Optional, to add some space from the bottom
+        child: Text(
+          'Data from Davao Food Terminal Complex (DFTC)',
+          style: TextStyle(
+            fontSize: 14,
+            fontStyle: FontStyle.italic,
+            color: Colors.grey,
+          ),
+          textAlign: TextAlign.center, // Ensures the text is centered
+        ),
+      ),
+    )
+
           ],
         ),
       ),
     );
+  }
+
+  // Previous and Next methods
+  void _previousCrop() {
+    setState(() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        _loadCropData();
+      }
+    });
+  }
+
+  void _nextCrop() {
+    setState(() {
+      if (currentIndex < filteredCropIds.length - 1) {
+        currentIndex++;
+        _loadCropData();
+      }
+    });
   }
 }
 
