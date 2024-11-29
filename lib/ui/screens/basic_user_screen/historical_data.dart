@@ -280,7 +280,11 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
 
   Widget _buildChart() {
     return SfCartesianChart(
-      tooltipBehavior: _tooltip,
+      tooltipBehavior: TooltipBehavior(
+        enable: true,
+        tooltipPosition: TooltipPosition.pointer,
+        format: 'point.x : point.y PHP', // Custom tooltip format
+      ),
       primaryXAxis: const CategoryAxis(
         labelRotation: 45, // Rotate labels if many dates
         interval: 1, // Show all labels
@@ -295,17 +299,25 @@ class _HistoricalDataScreenState extends State<HistoricalDataScreen> {
           textStyle: TextStyle(color: Colors.green), // Set color for Y-axis title
         ),
       ),
+      backgroundColor: Colors.lightBlue[50], // Set light blue background
       series: <CartesianSeries<_PriceData, String>>[
         LineSeries<_PriceData, String>(
           dataSource: priceData,
           xValueMapper: (_PriceData data, _) => data.date,
           yValueMapper: (_PriceData data, _) => data.price,
           name: 'Price',
-          dataLabelSettings: const DataLabelSettings(isVisible: true),
+          dataLabelSettings: const DataLabelSettings(isVisible: false),
+          color: Colors.blue, // Line color
+          markerSettings: const MarkerSettings(
+            isVisible: true, // Show markers
+            color: Colors.white, // Marker inner color
+            borderColor: Colors.blue, // Marker border color
+          ),
         ),
       ],
     );
   }
+
 
   @override
   Widget build(BuildContext context) {

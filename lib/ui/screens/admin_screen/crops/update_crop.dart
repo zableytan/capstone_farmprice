@@ -223,7 +223,7 @@ class _UpdateCropState extends State<UpdateCrop> {
 
             // CROP WHOLE PRICE
             const Text(
-              "Whole Price",
+              "Wholesale Price",
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
@@ -237,7 +237,7 @@ class _UpdateCropState extends State<UpdateCrop> {
               nextFocusNode: _landingPriceFocusNode,
               validator: (value) {
                 if (value!.isEmpty) {
-                  return "Whole price is required";
+                  return "Wholesale price is required";
                 }
                 return null;
               },
